@@ -7,10 +7,12 @@
 - [x] Add initial combo tests (node --test)
 
 ## Next
-- [ ] Expand combo coverage (airplane wings, four-with-two variants)
-- [ ] Build complete play-loop state machine (pass reset, win check, scoring)
+- [x] Expand combo coverage (airplane wings, four-with-two variants)
+- [x] Build complete play-loop state machine (pass reset, win check, scoring)
 - [x] Add AI baseline (placeholder)
-- [ ] Build Godot prototype scene
+- [x] Upgrade AI to rule-aware search (simple types + bomb/rocket fallback)
+- [ ] Upgrade AI for complex combos (straight/airplane/consecutive pairs)
+- [~] Build Godot prototype scene (skeleton folder + integration plan done)
 - [ ] Integrate Steamworks wrapper
 
 ## Testing Requests (for user later)

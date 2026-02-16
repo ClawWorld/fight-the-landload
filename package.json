@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "test": "node --test",
-    "demo": "node scripts/demo-round.js"
+    "demo": "node scripts/demo-round.js",
+    "demo:auto": "node scripts/demo-auto-round.js"
   }
 }

@@ -1,4 +1,6 @@
 import { buildDeck, shuffle, deal } from './cards.js';
+import { canBeat } from './compare.js';
+import { identifyCombo } from './combo.js';
 
 export function createRound({ rng = Math.random } = {}) {
   const deck = shuffle(buildDeck(), rng);
@@ -16,9 +18,12 @@ export function createRound({ rng = Math.random } = {}) {
     bids: {},
     landlord: null,
     currentPlayer: 'p1',
-    lastPlay: null,
+    lastPlay: null, // { playerId, cards, combo }
+    trickLeader: null,
     passStreak: 0,
-    winner: null
+    winner: null,
+    multiplier: 1,
+    scoreDelta: null
   };
 }
 
@@ -47,4 +52,77 @@ export function removeCardsFromHand(hand, cards) {
 
 export function nextPlayer(pid) {
   return pid === 'p1' ? 'p2' : pid === 'p2' ? 'p3' : 'p1';
+}
+
+export function playCards(state, playerId, cards) {
+  if (state.phase !== 'PLAYING') throw new Error('Not in playing phase');
+  if (state.currentPlayer !== playerId) throw new Error('Not this player turn');
+  if (!cards?.length) throw new Error('Cannot play empty cards');
+
+  const combo = identifyCombo(cards);
+  if (!combo) throw new Error('Invalid combo');
+
+  if (state.lastPlay && state.trickLeader !== playerId) {
+    if (!canBeat(state.lastPlay.cards, cards)) throw new Error('Play does not beat last play');
+  }
+
+  const hand = state.hands[playerId];
+  state.hands[playerId] = removeCardsFromHand(hand, cards);
+
+  state.lastPlay = { playerId, cards, combo };
+  state.trickLeader = playerId;
+  state.passStreak = 0;
+
+  if (combo.type === 'BOMB' || combo.type === 'ROCKET') state.multiplier *= 2;
+
+  if (state.hands[playerId].length === 0) {
+    state.winner = playerId;
+    state.phase = 'FINISHED';
+    state.scoreDelta = settleScore(state);
+    return state;
+  }
+
+  state.currentPlayer = nextPlayer(playerId);
+  return state;
+}
+
+export function passTurn(state, playerId) {
+  if (state.phase !== 'PLAYING') throw new Error('Not in playing phase');
+  if (state.currentPlayer !== playerId) throw new Error('Not this player turn');
+  if (!state.lastPlay) throw new Error('Cannot pass on fresh trick');
+  if (state.trickLeader === playerId) throw new Error('Trick leader cannot pass');
+
+  state.passStreak += 1;
+
+  if (state.passStreak >= 2) {
+    // everyone else passed, trick resets to leader
+    state.currentPlayer = state.trickLeader;
+    state.lastPlay = null;
+    state.passStreak = 0;
+    return state;
+  }
+
+  state.currentPlayer = nextPlayer(playerId);
+  return state;
+}
+
+function settleScore(state) {
+  const base = Math.max(...Object.values(state.bids));
+  const stake = base * state.multiplier;
+  const landlord = state.landlord;
+  const farmers = state.players.filter((p) => p !== landlord);
+
+  if (state.winner === landlord) {
+    return {
+      [landlord]: stake * 2,
+      [farmers[0]]: -stake,
+      [farmers[1]]: -stake
+    };
+  }
+
+  return {
+    [landlord]: -stake * 2,
+    [farmers[0]]: stake,
+    [farmers[1]]: stake
+  };
 }

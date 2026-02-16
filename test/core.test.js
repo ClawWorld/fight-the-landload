@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { buildDeck, shuffle, deal } from '../src/core/cards.js';
 import { identifyCombo } from '../src/core/combo.js';
 import { canBeat } from '../src/core/compare.js';
+import { playCards, passTurn } from '../src/core/state.js';
+import { choosePlay } from '../src/core/ai.js';
+import { runAutoRound } from '../src/core/sim.js';
 
 function cards(...ranks) {
   return ranks.map((rank, i) => ({ rank, suit: 'X', id: `${rank}-${i}` }));
@@ -41,4 +44,118 @@ test('compare logic', () => {
   assert.equal(canBeat(cards('7', '7', '7', '7'), cards('BJ', 'RJ')), true); // rocket always beats
   assert.equal(canBeat(cards('3', '3', '3', '3'), cards('4', '4', '4', '4')), true);
   assert.equal(canBeat(cards('3', '4', '5', '6', '7'), cards('4', '5', '6', '7', '8')), true);
+});
+
+test('identify extended combos', () => {
+  assert.equal(identifyCombo(cards('3', '3', '3', '4', '4', '4', '7', '8')).type, 'AIRPLANE_SINGLE_WINGS');
+  assert.equal(identifyCombo(cards('3', '3', '3', '4', '4', '4', '7', '7', '8', '8')).type, 'AIRPLANE_PAIR_WINGS');
+  assert.equal(identifyCombo(cards('A', 'A', 'A', 'A', '5', '7')).type, 'FOUR_TWO_SINGLES');
+  assert.equal(identifyCombo(cards('A', 'A', 'A', 'A', '5', '5', '7', '7')).type, 'FOUR_TWO_PAIRS');
+});
+
+test('state pass reset flow', () => {
+  const state = {
+    phase: 'PLAYING',
+    players: ['p1', 'p2', 'p3'],
+    hands: {
+      p1: cards('3', '3'),
+      p2: cards('4'),
+      p3: cards('5')
+    },
+    bids: { p1: 1, p2: 0, p3: 2 },
+    landlord: 'p3',
+    currentPlayer: 'p1',
+    lastPlay: null,
+    trickLeader: null,
+    passStreak: 0,
+    winner: null,
+    multiplier: 1,
+    scoreDelta: null
+  };
+
+  playCards(state, 'p1', [state.hands.p1[0]]);
+  assert.equal(state.currentPlayer, 'p2');
+
+  passTurn(state, 'p2');
+  assert.equal(state.currentPlayer, 'p3');
+  assert.equal(state.lastPlay.playerId, 'p1');
+
+  passTurn(state, 'p3');
+  assert.equal(state.currentPlayer, 'p1');
+  assert.equal(state.lastPlay, null);
+  assert.equal(state.passStreak, 0);
+});
+
+test('state finishes and settles score', () => {
+  const state = {
+    phase: 'PLAYING',
+    players: ['p1', 'p2', 'p3'],
+    hands: {
+      p1: cards('6'),
+      p2: cards('4', '4'),
+      p3: cards('5', '5')
+    },
+    bids: { p1: 2, p2: 0, p3: 1 },
+    landlord: 'p1',
+    currentPlayer: 'p1',
+    lastPlay: null,
+    trickLeader: null,
+    passStreak: 0,
+    winner: null,
+    multiplier: 1,
+    scoreDelta: null
+  };
+
+  playCards(state, 'p1', [state.hands.p1[0]]);
+  assert.equal(state.phase, 'FINISHED');
+  assert.equal(state.winner, 'p1');
+  assert.deepEqual(state.scoreDelta, { p1: 4, p2: -2, p3: -2 });
+});
+
+test('ai responds with minimal winning single', () => {
+  const hand = cards('3', '7', 'J');
+  const pick = choosePlay({ hand, lastPlayCards: cards('6') });
+  assert.equal(pick.length, 1);
+  assert.equal(pick[0].rank, '7');
+});
+
+test('ai uses bomb when cannot follow simple type', () => {
+  const hand = cards('3', '3', '3', '3', '5', '9');
+  const pick = choosePlay({ hand, lastPlayCards: cards('A', 'A') });
+  assert.equal(identifyCombo(pick).type, 'BOMB');
+});
+
+test('auto simulation can finish a small deterministic round', () => {
+  const state = {
+    phase: 'PLAYING',
+    players: ['p1', 'p2', 'p3'],
+    hands: {
+      p1: [
+        { rank: '3', suit: 'X', id: 'p1-3' },
+        { rank: '4', suit: 'X', id: 'p1-4' }
+      ],
+      p2: [
+        { rank: '5', suit: 'X', id: 'p2-5' },
+        { rank: '6', suit: 'X', id: 'p2-6' }
+      ],
+      p3: [
+        { rank: '7', suit: 'X', id: 'p3-7' },
+        { rank: '8', suit: 'X', id: 'p3-8' }
+      ]
+    },
+    bids: { p1: 1, p2: 0, p3: 2 },
+    landlord: 'p3',
+    currentPlayer: 'p1',
+    lastPlay: null,
+    trickLeader: null,
+    passStreak: 0,
+    winner: null,
+    multiplier: 1,
+    scoreDelta: null
+  };
+
+  const result = runAutoRound(state, { maxTurns: 100 });
+  assert.equal(result.finished, true);
+  assert.ok(['p1', 'p2', 'p3'].includes(result.winner));
+  assert.notEqual(result.state.scoreDelta, null);
 });

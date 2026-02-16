@@ -1,8 +1,10 @@
 import { RANK_VALUE, countRanks, sortRanksAsc } from './cards.js';
 
+const BLOCKED_IN_SEQUENCES = new Set(['2', 'BJ', 'RJ']);
+
 function isStraightRanks(ranks) {
   if (ranks.length < 5) return false;
-  if (ranks.some((r) => ['2', 'BJ', 'RJ'].includes(r))) return false;
+  if (ranks.some((r) => BLOCKED_IN_SEQUENCES.has(r))) return false;
   const sorted = sortRanksAsc(ranks);
   for (let i = 1; i < sorted.length; i++) {
     if (RANK_VALUE[sorted[i]] !== RANK_VALUE[sorted[i - 1]] + 1) return false;
@@ -15,6 +17,47 @@ function repeatedRanks(countMap, targetCount) {
     .filter(([, c]) => c === targetCount)
     .map(([r]) => r)
     .sort((a, b) => RANK_VALUE[a] - RANK_VALUE[b]);
+}
+
+function isConsecutive(ranks) {
+  if (!ranks.length) return false;
+  const sorted = sortRanksAsc(ranks);
+  for (let i = 1; i < sorted.length; i++) {
+    if (RANK_VALUE[sorted[i]] !== RANK_VALUE[sorted[i - 1]] + 1) return false;
+  }
+  return true;
+}
+
+function matchAirplaneWithWings(counts, chainLen, wingType) {
+  // wingType: 'single' | 'pair'
+  const tripleRanks = [...counts.entries()]
+    .filter(([r, c]) => c === 3 && !BLOCKED_IN_SEQUENCES.has(r))
+    .map(([r]) => r)
+    .sort((a, b) => RANK_VALUE[a] - RANK_VALUE[b]);
+
+  if (tripleRanks.length < chainLen) return null;
+
+  for (let i = 0; i <= tripleRanks.length - chainLen; i++) {
+    const chain = tripleRanks.slice(i, i + chainLen);
+    if (!isConsecutive(chain)) continue;
+
+    const remaining = new Map(counts);
+    for (const r of chain) remaining.set(r, remaining.get(r) - 3);
+
+    const remains = [...remaining.entries()].filter(([, c]) => c > 0);
+    if (wingType === 'single') {
+      const total = remains.reduce((s, [, c]) => s + c, 0);
+      if (total === chainLen) {
+        return { type: 'AIRPLANE_SINGLE_WINGS', mainRank: chain.at(-1), chainLength: chainLen };
+      }
+    } else {
+      if (remains.length === chainLen && remains.every(([, c]) => c === 2)) {
+        return { type: 'AIRPLANE_PAIR_WINGS', mainRank: chain.at(-1), chainLength: chainLen };
+      }
+    }
+  }
+
+  return null;
 }
 
 export function identifyCombo(cards) {
@@ -54,30 +97,43 @@ export function identifyCombo(cards) {
   // Consecutive pairs (e.g. 334455)
   if (n >= 6 && n % 2 === 0 && repeatedRanks(counts, 2).length === n / 2) {
     const pairs = repeatedRanks(counts, 2);
-    if (!pairs.some((r) => ['2', 'BJ', 'RJ'].includes(r))) {
-      let ok = true;
-      for (let i = 1; i < pairs.length; i++) {
-        if (RANK_VALUE[pairs[i]] !== RANK_VALUE[pairs[i - 1]] + 1) {
-          ok = false;
-          break;
-        }
-      }
-      if (ok) return { type: 'CONSECUTIVE_PAIRS', length: n, mainRank: pairs.at(-1) };
+    if (!pairs.some((r) => BLOCKED_IN_SEQUENCES.has(r)) && isConsecutive(pairs)) {
+      return { type: 'CONSECUTIVE_PAIRS', length: n, mainRank: pairs.at(-1) };
     }
   }
 
   // Airplane without wings (e.g. 333444)
   if (n >= 6 && n % 3 === 0 && repeatedRanks(counts, 3).length === n / 3) {
     const triples = repeatedRanks(counts, 3);
-    if (!triples.some((r) => ['2', 'BJ', 'RJ'].includes(r))) {
-      let ok = true;
-      for (let i = 1; i < triples.length; i++) {
-        if (RANK_VALUE[triples[i]] !== RANK_VALUE[triples[i - 1]] + 1) {
-          ok = false;
-          break;
-        }
-      }
-      if (ok) return { type: 'AIRPLANE', length: n, mainRank: triples.at(-1), chainLength: triples.length };
+    if (!triples.some((r) => BLOCKED_IN_SEQUENCES.has(r)) && isConsecutive(triples)) {
+      return { type: 'AIRPLANE', length: n, mainRank: triples.at(-1), chainLength: triples.length };
+    }
+  }
+
+  // Airplane + single wings (e.g. 33344456)
+  if (n >= 8 && n % 4 === 0) {
+    const chainLen = n / 4;
+    const matched = matchAirplaneWithWings(counts, chainLen, 'single');
+    if (matched) return { ...matched, length: n };
+  }
+
+  // Airplane + pair wings (e.g. 3334445566)
+  if (n >= 10 && n % 5 === 0) {
+    const chainLen = n / 5;
+    const matched = matchAirplaneWithWings(counts, chainLen, 'pair');
+    if (matched) return { ...matched, length: n };
+  }
+
+  // Four with two singles (e.g. AAAA + 5 + 7)
+  if (n === 6 && byCount[0][1] === 4) {
+    return { type: 'FOUR_TWO_SINGLES', length: 6, mainRank: byCount[0][0] };
+  }
+
+  // Four with two pairs (e.g. AAAA + 55 + 77)
+  if (n === 8 && byCount[0][1] === 4) {
+    const rest = byCount.slice(1);
+    if (rest.length === 2 && rest.every(([, c]) => c === 2)) {
+      return { type: 'FOUR_TWO_PAIRS', length: 8, mainRank: byCount[0][0] };
     }
   }
 
