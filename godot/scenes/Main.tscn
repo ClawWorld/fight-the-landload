@@ -59,10 +59,18 @@ offset_right = 340.0
 offset_bottom = 700.0
 text = "Pass"
 
-[node name="Status" type="Label" parent="."]
+[node name="ClearButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 360.0
+offset_top = 640.0
+offset_right = 500.0
+offset_bottom = 700.0
+text = "Clear"
+
+[node name="Status" type="Label" parent="."]
+layout_mode = 0
+offset_left = 520.0
 offset_top = 656.0
-offset_right = 1200.0
+offset_right = 1240.0
 offset_bottom = 696.0
 text = "Status: ready"

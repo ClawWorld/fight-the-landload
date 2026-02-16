@@ -12,7 +12,7 @@
 - [x] Add AI baseline (placeholder)
 - [x] Upgrade AI to rule-aware search (simple types + bomb/rocket fallback)
 - [~] Upgrade AI for complex combos (straight/consecutive pairs/airplane single-wing done; airplane pair-wing strategy tuning next)
-- [~] Build Godot prototype scene (project + Main + selectable card UI + Play/Pass interaction done; next: connect JS/core adapter)
+- [~] Build Godot prototype scene (project + interactive card UI + local rule adapter for single/pair/triple/bomb/rocket done; next: full rules parity with src/core)
 - [ ] Integrate Steamworks wrapper
 
 ## Testing Requests (for user later)
