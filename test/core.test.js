@@ -125,6 +125,43 @@ test('ai uses bomb when cannot follow simple type', () => {
   assert.equal(identifyCombo(pick).type, 'BOMB');
 });
 
+test('ai responds to straight with a higher straight', () => {
+  const hand = cards('4', '5', '6', '7', '8', 'Q');
+  const pick = choosePlay({ hand, lastPlayCards: cards('3', '4', '5', '6', '7') });
+  assert.equal(identifyCombo(pick).type, 'STRAIGHT');
+  assert.equal(canBeat(cards('3', '4', '5', '6', '7'), pick), true);
+});
+
+test('ai responds to consecutive pairs', () => {
+  const hand = cards('4', '4', '5', '5', '6', '6', 'Q');
+  const pick = choosePlay({ hand, lastPlayCards: cards('3', '3', '4', '4', '5', '5') });
+  assert.equal(identifyCombo(pick).type, 'CONSECUTIVE_PAIRS');
+  assert.equal(canBeat(cards('3', '3', '4', '4', '5', '5'), pick), true);
+});
+
+test('ai responds to airplane without wings', () => {
+  const hand = cards('4', '4', '4', '5', '5', '5', '9');
+  const pick = choosePlay({ hand, lastPlayCards: cards('3', '3', '3', '4', '4', '4') });
+  assert.equal(identifyCombo(pick).type, 'AIRPLANE');
+  assert.equal(canBeat(cards('3', '3', '3', '4', '4', '4'), pick), true);
+});
+
+test('ai responds to airplane with single wings', () => {
+  const hand = cards('4', '4', '4', '5', '5', '5', '8', '9', 'Q');
+  const last = cards('3', '3', '3', '4', '4', '4', '6', '7');
+  const pick = choosePlay({ hand, lastPlayCards: last });
+  assert.equal(identifyCombo(pick).type, 'AIRPLANE_SINGLE_WINGS');
+  assert.equal(canBeat(last, pick), true);
+});
+
+test('ai responds to airplane with pair wings', () => {
+  const hand = cards('4', '4', '4', '5', '5', '5', '8', '8', '9', '9', 'Q');
+  const last = cards('3', '3', '3', '4', '4', '4', '6', '6', '7', '7');
+  const pick = choosePlay({ hand, lastPlayCards: last });
+  assert.equal(identifyCombo(pick).type, 'AIRPLANE_PAIR_WINGS');
+  assert.equal(canBeat(last, pick), true);
+});
+
 test('auto simulation can finish a small deterministic round', () => {
   const state = {
     phase: 'PLAYING',

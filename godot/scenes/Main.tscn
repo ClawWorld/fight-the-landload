@@ -1,0 +1,68 @@
+[gd_scene load_steps=2 format=3 uid="uid://main"]
+
+[ext_resource type="Script" path="res://scripts/Main.gd" id="1_main"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 24.0
+offset_right = 520.0
+offset_bottom = 70.0
+text = "Landlord (Dou Dizhu) - Prototype"
+
+[node name="Info" type="Label" parent="."]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 72.0
+offset_right = 900.0
+offset_bottom = 120.0
+text = "Select cards and press Play / Pass (logic hook in progress)."
+
+[node name="HandContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 520.0
+offset_right = 1240.0
+offset_bottom = 600.0
+theme_override_constants/separation = 8
+
+[node name="SelectedInfo" type="Label" parent="."]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 600.0
+offset_right = 1240.0
+offset_bottom = 628.0
+text = "Selected: (none)"
+
+[node name="PlayButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 640.0
+offset_right = 180.0
+offset_bottom = 700.0
+text = "Play"
+
+[node name="PassButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 640.0
+offset_right = 340.0
+offset_bottom = 700.0
+text = "Pass"
+
+[node name="Status" type="Label" parent="."]
+layout_mode = 0
+offset_left = 360.0
+offset_top = 656.0
+offset_right = 1200.0
+offset_bottom = 696.0
+text = "Status: ready"

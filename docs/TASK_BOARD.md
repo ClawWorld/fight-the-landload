@@ -11,8 +11,8 @@
 - [x] Build complete play-loop state machine (pass reset, win check, scoring)
 - [x] Add AI baseline (placeholder)
 - [x] Upgrade AI to rule-aware search (simple types + bomb/rocket fallback)
-- [ ] Upgrade AI for complex combos (straight/airplane/consecutive pairs)
-- [~] Build Godot prototype scene (skeleton folder + integration plan done)
+- [~] Upgrade AI for complex combos (straight/consecutive pairs/airplane single-wing done; airplane pair-wing strategy tuning next)
+- [~] Build Godot prototype scene (project + Main + selectable card UI + Play/Pass interaction done; next: connect JS/core adapter)
 - [ ] Integrate Steamworks wrapper
 
 ## Testing Requests (for user later)
