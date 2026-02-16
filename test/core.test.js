@@ -7,6 +7,7 @@ import { playCards, passTurn } from '../src/core/state.js';
 import { choosePlay } from '../src/core/ai.js';
 import { runAutoRound } from '../src/core/sim.js';
 import { runAutoGame } from '../src/core/full-game.js';
+import { createSeededRng } from '../src/core/rng.js';
 
 function cards(...ranks) {
   return ranks.map((rank, i) => ({ rank, suit: 'X', id: `${rank}-${i}` }));
@@ -210,4 +211,20 @@ test('auto full game score conserves zero-sum', () => {
   const result = runAutoGame({ maxTurns: 2000 });
   const total = Object.values(result.scoreDelta).reduce((s, n) => s + n, 0);
   assert.equal(total, 0);
+});
+
+test('seeded RNG is deterministic', () => {
+  const a = createSeededRng(42);
+  const b = createSeededRng(42);
+  const seqA = [a(), a(), a(), a(), a()];
+  const seqB = [b(), b(), b(), b(), b()];
+  assert.deepEqual(seqA, seqB);
+});
+
+test('multiple seeded full games finish reliably', () => {
+  for (let i = 0; i < 20; i++) {
+    const rng = createSeededRng(1000 + i);
+    const result = runAutoGame({ rng, maxTurns: 3000 });
+    assert.equal(result.finished, true);
+  }
 });

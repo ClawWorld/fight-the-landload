@@ -13,7 +13,7 @@
 - [x] Upgrade AI to rule-aware search (simple types + bomb/rocket fallback)
 - [x] Upgrade AI for complex combos (straight/consecutive pairs/airplane + wings responses)
 - [x] Add auto full-game simulation (deal + bid + play until finish)
-- [~] Build Godot prototype scene (project + interactive card UI + local rule adapter for single/pair/triple/bomb/rocket done; next: full rules parity with src/core)
+- [~] Build Godot prototype scene (project + interactive card UI + expanded local rule adapter incl. straight/连对/飞机无翅膀/三带/四带 done; next: full parity incl. airplane wings + real turn-state binding)
 - [ ] Integrate Steamworks wrapper
 
 ## Testing Requests (for user later)
