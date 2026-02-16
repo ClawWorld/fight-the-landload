@@ -6,6 +6,7 @@ import { canBeat } from '../src/core/compare.js';
 import { playCards, passTurn } from '../src/core/state.js';
 import { choosePlay } from '../src/core/ai.js';
 import { runAutoRound } from '../src/core/sim.js';
+import { runAutoGame } from '../src/core/full-game.js';
 
 function cards(...ranks) {
   return ranks.map((rank, i) => ({ rank, suit: 'X', id: `${rank}-${i}` }));
@@ -195,4 +196,18 @@ test('auto simulation can finish a small deterministic round', () => {
   assert.equal(result.finished, true);
   assert.ok(['p1', 'p2', 'p3'].includes(result.winner));
   assert.notEqual(result.state.scoreDelta, null);
+});
+
+test('auto full game can finish', () => {
+  const result = runAutoGame({ maxTurns: 2000 });
+  assert.equal(result.finished, true);
+  assert.ok(['p1', 'p2', 'p3'].includes(result.winner));
+  assert.ok(['p1', 'p2', 'p3'].includes(result.landlord));
+  assert.notEqual(result.scoreDelta, null);
+});
+
+test('auto full game score conserves zero-sum', () => {
+  const result = runAutoGame({ maxTurns: 2000 });
+  const total = Object.values(result.scoreDelta).reduce((s, n) => s + n, 0);
+  assert.equal(total, 0);
 });
