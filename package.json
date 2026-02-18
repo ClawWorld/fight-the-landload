@@ -9,5 +9,22 @@
     "demo:auto": "node scripts/demo-auto-round.js",
     "demo:full": "node scripts/demo-full-game.js",
     "demo:stats": "node scripts/sim-stats.js"
-  }
+  },
+  "description": "English PC game targeting Steam on Windows/macOS/Linux.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ClawWorld/fight-the-landload.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ClawWorld/fight-the-landload/issues"
+  },
+  "homepage": "https://github.com/ClawWorld/fight-the-landload#readme"
 }

@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dou Dizhu - Landlord Card Game</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a3a2a 0%, #0d1f17 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        
+        h1 { text-align: center; margin-bottom: 10px; }
+        
+        .game-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 600px;
+        }
+        
+        .status-bar {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .phase { font-size: 1.2em; color: #4ade80; font-weight: bold; }
+        .message { margin-top: 10px; font-size: 1.1em; }
+        
+        .table {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px;
+            background: rgba(0,100,50,0.3);
+            border-radius: 20px;
+            min-height: 300px;
+            margin-bottom: 20px;
+        }
+        
+        .player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .player-info {
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .player-name { font-weight: bold; font-size: 1.1em; }
+        .hand-count { color: #fbbf24; }
+        .landlord-badge { 
+            background: #ef4444; 
+            color: white; 
+            padding: 2px 8px; 
+            border-radius: 5px; 
+            font-size: 0.8em;
+        }
+        
+        .cards-back {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .card-back {
+            width: 40px;
+            height: 56px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 5px;
+            border: 2px solid #fff;
+        }
+        
+        .last-play {
+            text-align: center;
+            min-width: 200px;
+        }
+        
+        .last-play-cards {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            min-height: 60px;
+            align-items: center;
+        }
+        
+        .kitty-area {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        
+        .player-hand {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+        }
+        
+        .card {
+            width: 50px;
+            height: 70px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #000;
+            font-weight: bold;
+            user-select: none;
+            position: relative;
+        }
+        
+        .card:hover { transform: translateY(-10px); }
+        .card.selected { 
+            transform: translateY(-20px); 
+            box-shadow: 0 0 15px #fbbf24;
+        }
+        
+        .card.red { color: #dc2626; }
+        .card.black { color: #000; }
+        
+        .card .suit { font-size: 1.5em; }
+        .card .rank { font-size: 1.2em; position: absolute; top: 5px; left: 5px; }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pass { background: #f59e0b; color: white; }
+        .btn-bid { background: #3b82f6; color: white; }
+        .btn-pass-bid { background: #6b7280; color: white; }
+        
+        button:hover { transform: scale(1.05); }
+        button:disabled { 
+            opacity: 0.5; 
+            cursor: not-allowed; 
+            transform: none;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        
+        .score-item { text-align: center; }
+        .score-value { font-size: 1.5em; font-weight: bold; color: #4ade80; }
+        
+        .winner-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 100;
+        }
+        
+        .winner-text {
+            font-size: 3em;
+            color: #fbbf24;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🃏 Dou Dizhu - Landlord Card Game</h1>
+    
+    <div class="game-container">
+        <div class="status-bar">
+            <div class="phase" id="phase">Phase: Bidding</div>
+            <div class="message" id="message">Your turn to bid!</div>
+        </div>
+        
+        <div class="kitty-area">
+            <span>Kitty (3 cards): </span>
+            <span id="kittyCards">???</span>
+        </div>
+        
+        <div class="table">
+            <div class="player" id="aiLeft">
+                <div class="player-info">
+                    <div class="player-name">AI Left</div>
+                    <div class="hand-count" id="leftHandCount">17 cards</div>
+                </div>
+                <div class="cards-back" id="leftCardsBack"></div>
+            </div>
+            
+            <div class="last-play">
+                <div>Last Play:</div>
+                <div class="last-play-cards" id="lastPlayCards">
+                    <span style="color: #9ca3af;">(none)</span>
+                </div>
+            </div>
+            
+            <div class="player" id="aiRight">
+                <div class="player-info">
+                    <div class="player-name">AI Right</div>
+                    <div class="hand-count" id="rightHandCount">17 cards</div>
+                </div>
+                <div class="cards-back" id="rightCardsBack"></div>
+            </div>
+        </div>
+        
+        <div class="player-hand" id="playerHand"></div>
+        
+        <div class="controls" id="controls">
+            <button class="btn-bid" onclick="makeBid(1)">1 Point</button>
+            <button class="btn-bid" onclick="makeBid(2)">2 Points</button>
+            <button class="btn-bid" onclick="makeBid(3)">3 Points</button>
+            <button class="btn-pass-bid" onclick="makeBid(0)">Pass</button>
+        </div>
+        
+        <div class="score-board" id="scoreBoard">
+            <div class="score-item">
+                <div>Player</div>
+                <div class="score-value" id="scorePlayer">0</div>
+            </div>
+            <div class="score-item">
+                <div>AI Left</div>
+                <div class="score-value" id="scoreLeft">0</div>
+            </div>
+            <div class="score-item">
+                <div>AI Right</div>
+                <div class="score-value" id="scoreRight">0</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="winner-overlay" id="winnerOverlay" style="display: none;">
+        <div class="winner-text" id="winnerText">Player Wins!</div>
+        <button onclick="startNewGame()">Play Again</button>
+    </div>
+
+    <script>
+        // Card configuration
+        const SUITS = ['♠', '♥', '♦', '♣'];
+        const RANKS = ['3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2'];
+        const RANK_VALUE = {};
+        RANKS.forEach((r, i) => RANK_VALUE[r] = i);
+        RANK_VALUE['BJ'] = 13;
+        RANK_VALUE['RJ'] = 14;
+        
+        const BLOCKED_SEQ = new Set(['2', 'BJ', 'RJ']);
+        
+        // Game state
+        let players = ['Player', 'AI_Left', 'AI_Right'];
+        let hands = {};
+        let kitty = [];
+        let currentPlayer = 0;
+        let phase = 'BIDDING'; // BIDDING, PLAYING, FINISHED
+        let bids = {};
+        let highestBid = 0;
+        let highestBidder = '';
+        let landlord = '';
+        let lastPlay = null;
+        let trickLeader = '';
+        let passCount = 0;
+        let multiplier = 1;
+        let baseStake = 1;
+        let scores = { Player: 0, AI_Left: 0, AI_Right: 0 };
+        let selectedCards = [];
+        
+        // Initialize
+        function init() {
+            startNewGame();
+        }
+        
+        function startNewGame() {
+            // Reset state
+            phase = 'BIDDING';
+            currentPlayer = 0;
+            bids = {};
+            highestBid = 0;
+            highestBidder = '';
+            landlord = '';
+            lastPlay = null;
+            trickLeader = '';
+            passCount = 0;
+            multiplier = 1;
+            baseStake = 1;
+            selectedCards = [];
+            
+            // Generate and shuffle deck
+            let deck = buildDeck();
+            shuffle(deck);
+            dealCards(deck);
+            
+            // Update UI
+            document.getElementById('winnerOverlay').style.display = 'none';
+            updateUI();
+        }
+        
+        function buildDeck() {
+            let deck = [];
+            for (let suit of SUITS) {
+                for (let rank of RANKS) {
+                    deck.push(rank + suit[0]);
+                }
+            }
+            deck.push('BJ', 'RJ');
+            return deck;
+        }
+        
+        function shuffle(deck) {
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+        }
+        
+        function dealCards(deck) {
+            hands['Player'] = deck.slice(0, 17);
+            hands['AI_Left'] = deck.slice(17, 34);
+            hands['AI_Right'] = deck.slice(34, 51);
+            kitty = deck.slice(51, 54);
+            
+            // Sort hands
+            for (let p in hands) {
+                hands[p].sort((a, b) => getRankValue(a) - getRankValue(b));
+            }
+        }
+        
+        function getRankValue(card) {
+            let rank = card.slice(0, -1);
+            return RANK_VALUE[rank] !== undefined ? RANK_VALUE[rank] : 0;
+        }
+        
+        function getRank(card) {
+            return card.slice(0, -1);
+        }
+        
+        function getSuit(card) {
+            return card.slice(-1);
+        }
+        
+        // Combo identification
+        function identifyCombo(cards) {
+            if (!cards || cards.length === 0) return null;
+            
+            let counts = {};
+            for (let c of cards) {
+                let r = getRank(c);
+                counts[r] = (counts[r] || 0) + 1;
+            }
+            
+            let n = cards.length;
+            let uniqueRanks = Object.keys(counts);
+            let byCount = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+            
+            // Rocket
+            if (n === 2 && counts['BJ'] && counts['RJ']) {
+                return { type: 'ROCKET', main: 'RJ', length: 2 };
+            }
+            
+            // Single
+            if (n === 1) {
+                return { type: 'SINGLE', main: uniqueRanks[0], length: 1 };
+            }
+            
+            // Pair
+            if (n === 2 && byCount[0][1] === 2) {
+                return { type: 'PAIR', main: byCount[0][0], length: 2 };
+            }
+            
+            // Triple
+            if (n === 3 && byCount[0][1] === 3) {
+                return { type: 'TRIPLE', main: byCount[0][0], length: 3 };
+            }
+            
+            // Bomb
+            if (n === 4 && byCount[0][1] === 4) {
+                return { type: 'BOMB', main: byCount[0][0], length: 4 };
+            }
+            
+            // Triple + Single
+            if (n === 4 && byCount[0][1] === 3) {
+                return { type: 'TRIPLE_SINGLE', main: byCount[0][0], length: 4 };
+            }
+            
+            // Triple + Pair
+            if (n === 5 && byCount[0][1] === 3 && byCount[1] && byCount[1][1] === 2) {
+                return { type: 'TRIPLE_PAIR', main: byCount[0][0], length: 5 };
+            }
+            
+            // Straight
+            if (n >= 5 && uniqueRanks.length === n && isStraight(uniqueRanks)) {
+                return { type: 'STRAIGHT', main: uniqueRanks[uniqueRanks.length - 1], length: n };
+            }
+            
+            // Consecutive pairs
+            if (n >= 6 && n % 2 === 0) {
+                let pairs = uniqueRanks.filter(r => counts[r] === 2);
+                if (pairs.length === n / 2 && isConsecutive(pairs)) {
+                    return { type: 'CONSECUTIVE_PAIRS', main: pairs[pairs.length - 1], length: n };
+                }
+            }
+            
+            // Airplane (no wings)
+            if (n >= 6 && n % 3 === 0) {
+                let triples = uniqueRanks.filter(r => counts[r] === 3);
+                if (triples.length === n / 3 && isConsecutive(triples)) {
+                    return { type: 'AIRPLANE', main: triples[triples.length - 1], length: n, chainLength: triples.length };
+                }
+            }
+            
+            // Four + two singles
+            if (n === 6 && byCount[0][1] === 4) {
+                return { type: 'FOUR_TWO_SINGLES', main: byCount[0][0], length: 6 };
+            }
+            
+            // Four + two pairs
+            if (n === 8 && byCount[0][1] === 4) {
+                let pairCount = byCount.slice(1).filter(([,c]) => c === 2).length;
+                if (pairCount === 2) {
+                    return { type: 'FOUR_TWO_PAIRS', main: byCount[0][0], length: 8 };
+                }
+            }
+            
+            return null;
+        }
+        
+        function isStraight(ranks) {
+            let sorted = [...ranks].sort((a, b) => RANK_VALUE[a] - RANK_VALUE[b]);
+            for (let i = 1; i < sorted.length; i++) {
+                if (BLOCKED_SEQ.has(sorted[i])) return false;
+                if (RANK_VALUE[sorted[i]] !== RANK_VALUE[sorted[i-1]] + 1) return false;
+            }
+            return true;
+        }
+        
+        function isConsecutive(ranks) {
+            let sorted = [...ranks].sort((a, b) => RANK_VALUE[a] - RANK_VALUE[b]);
+            for (let i = 1; i < sorted.length; i++) {
+                if (BLOCKED_SEQ.has(sorted[i])) return false;
+                if (RANK_VALUE[sorted[i]] !== RANK_VALUE[sorted[i-1]] + 1) return false;
+            }
+            return true;
+        }
+        
+        function canBeat(lastCards, newCards) {
+            let last = lastCards ? identifyCombo(lastCards) : null;
+            let next = identifyCombo(newCards);
+            
+            if (!next) return false;
+            if (!last) return true;
+            
+            // Rocket beats everything
+            if (next.type === 'ROCKET') return true;
+            if (last.type === 'ROCKET') return false;
+            
+            // Bomb beats non-bomb
+            if (next.type === 'BOMB' && last.type !== 'BOMB') return true;
+            if (last.type === 'BOMB' && next.type !== 'BOMB') return false;
+            
+            // Both bombs
+            if (next.type === 'BOMB' && last.type === 'BOMB') {
+                return RANK_VALUE[next.main] > RANK_VALUE[last.main];
+            }
+            
+            // Same type and length
+            if (next.type !== last.type || next.length !== last.length) return false;
+            
+            return RANK_VALUE[next.main] > RANK_VALUE[last.main];
+        }
+        
+        // UI Functions
+        function updateUI() {
+            // Phase
+            document.getElementById('phase').textContent = 
+                phase === 'BIDDING' ? 'Phase: Bidding' : 
+                phase === 'PLAYING' ? 'Phase: Playing' : 'Phase: Finished';
+            
+            // Current player message
+            let currentPlayerName = players[currentPlayer];
+            let isMyTurn = currentPlayer === 0;
+            
+            if (phase === 'BIDDING') {
+                document.getElementById('message').textContent = 
+                    isMyTurn ? "Your turn to bid!" : `${currentPlayerName} is bidding...`;
+            } else if (phase === 'PLAYING') {
+                document.getElementById('message').textContent = 
+                    isMyTurn ? "Your turn to play!" : `${currentPlayerName} is thinking...`;
+            }
+            
+            // Kitty
+            if (phase === 'BIDDING') {
+                document.getElementById('kittyCards').textContent = '???';
+            } else {
+                document.getElementById('kittyCards').textContent = kitty.map(c => getRank(c)).join(', ');
+            }
+            
+            // Opponent hand counts
+            document.getElementById('leftHandCount').textContent = 
+                hands['AI_Left'].length + ' cards';
+            document.getElementById('rightHandCount').textContent = 
+                hands['AI_Right'].length + ' cards';
+            
+            // Last play
+            if (lastPlay) {
+                let cardsHtml = lastPlay.cards.map(c => formatCard(c)).join('');
+                document.getElementById('lastPlayCards').innerHTML = 
+                    cardsHtml + `<div style="font-size:0.8em;color:#9ca3af">${lastPlay.player}</div>`;
+            } else {
+                document.getElementById('lastPlayCards').innerHTML = 
+                    '<span style="color: #9ca3af;">(none)</span>';
+            }
+            
+            // Player hand
+            renderPlayerHand();
+            
+            // Controls
+            renderControls();
+            
+            // Scores
+            document.getElementById('scorePlayer').textContent = scores['Player'];
+            document.getElementById('scoreLeft').textContent = scores['AI_Left'];
+            document.getElementById('scoreRight').textContent = scores['AI_Right'];
+        }
+        
+        function renderPlayerHand() {
+            let container = document.getElementById('playerHand');
+            container.innerHTML = '';
+            
+            let hand = hands['Player'];
+            for (let i = 0; i < hand.length; i++) {
+                let card = hand[i];
+                let cardEl = document.createElement('div');
+                cardEl.className = 'card ' + (getSuit(card) === '♥' || getSuit(card) === '♦' ? 'red' : 'black');
+                cardEl.innerHTML = `
+                    <span class="rank">${getRank(card)}</span>
+                    <span class="suit">${getSuit(card) === 'B' ? '🃏' : getSuit(card) === 'R' ? '🃏' : 
+                        getSuit(card) === 'H' ? '♥' : 
+                        getSuit(card) === 'D' ? '♦' : 
+                        getSuit(card) === 'C' ? '♣' : '♠'}</span>
+                `;
+                cardEl.onclick = () => toggleCard(i);
+                if (selectedCards.includes(i)) {
+                    cardEl.classList.add('selected');
+                }
+                container.appendChild(cardEl);
+            }
+        }
+        
+        function formatCard(card) {
+            let rank = getRank(card);
+            let suit = getSuit(card);
+            let suitChar = suit === 'H' ? '♥' : suit === 'D' ? '♦' : suit === 'C' ? '♣' : '♠';
+            if (rank === 'BJ' || rank === 'RJ') suitChar = '🃏';
+            return `<div class="card ${suit === 'H' || suit === 'D' ? 'red' : 'black'}" style="width:40px;height:56px;display:inline-flex;margin:2px;">
+                <span style="font-size:0.8em;position:absolute;top:2px;left:3px;">${rank}</span>
+                <span style="font-size:1em;">${suitChar}</span>
+            </div>`;
+        }
+        
+        function toggleCard(index) {
+            if (phase !== 'PLAYING' || currentPlayer !== 0) return;
+            
+            if (selectedCards.includes(index)) {
+                selectedCards = selectedCards.filter(i => i !== index);
+            } else {
+                selectedCards.push(index);
+            }
+            selectedCards.sort((a, b) => a - b);
+            renderPlayerHand();
+        }
+        
+        function renderControls() {
+            let container = document.getElementById('controls');
+            container.innerHTML = '';
+            
+            if (phase === 'BIDDING') {
+                if (currentPlayer === 0) {
+                    container.innerHTML = `
+                        <button class="btn-bid" onclick="makeBid(1)">1 Point</button>
+                        <button class="btn-bid" onclick="makeBid(2)">2 Points</button>
+                        <button class="btn-bid" onclick="makeBid(3)">3 Points</button>
+                        <button class="btn-pass-bid" onclick="makeBid(0)">Pass</button>
+                    `;
+                } else {
+                    container.innerHTML = '<span style="color:#9ca3af;">Waiting for AI...</span>';
+                }
+            } else if (phase === 'PLAYING') {
+                if (currentPlayer === 0) {
+                    container.innerHTML = `
+                        <button class="btn-play" onclick="playCards()">Play</button>
+                        <button class="btn-pass" onclick="pass()">Pass</button>
+                    `;
+                } else {
+                    container.innerHTML = '<span style="color:#9ca3af;">AI is thinking...</span>';
+                }
+            }
+        }
+        
+        // Game actions
+        function makeBid(value) {
+            if (phase !== 'BIDDING' || currentPlayer !== 0) return;
+            
+            bids['Player'] = value;
+            if (value > highestBid) {
+                highestBid = value;
+                highestBidder = 'Player';
+            }
+            
+            nextPlayer();
+            updateUI();
+            
+            if (bids.size === 3) {
+                setTimeout(finishBidding, 500);
+            } else {
+                setTimeout(aiBid, 800);
+            }
+        }
+        
+        function aiBid() {
+            let ai = players[currentPlayer];
+            // Simple AI: random bid with preference for higher bids
+            let bid = 0;
+            if (Math.random() > 0.3) {
+                bid = Math.floor(Math.random() * 3) + 1;
+            }
+            
+            bids[ai] = bid;
+            if (bid > highestBid) {
+                highestBid = bid;
+                highestBidder = ai;
+            }
+            
+            nextPlayer();
+            updateUI();
+            
+            if (Object.keys(bids).length === 3) {
+                setTimeout(finishBidding, 500);
+            } else {
+                setTimeout(aiBid, 800);
+            }
+        }
+        
+        function finishBidding() {
+            if (highestBid === 0) {
+                document.getElementById('message').textContent = "All passed! Starting new game...";
+                setTimeout(startNewGame, 1500);
+                return;
+            }
+            
+            landlord = highestBidder;
+            hands[landlord].push(...kitty);
+            hands[landlord].sort((a, b) => getRankValue(a) - getRankValue(b));
+            
+            phase = 'PLAYING';
+            currentPlayer = players.indexOf(landlord);
+            trickLeader = landlord;
+            baseStake = highestBid;
+            
+            updateUI();
+            playTurn();
+        }
+        
+        function playTurn() {
+            if (phase !== 'PLAYING') return;
+            
+            let player = players[currentPlayer];
+            
+            if (player === 'Player') {
+                updateUI();
+            } else {
+                setTimeout(() => aiPlay(player), 1000 + Math.random() * 1000);
+            }
+        }
+        
+        function aiPlay(ai) {
+            let hand = hands[ai];
+            let lastCards = lastPlay ? lastPlay.cards : [];
+            
+            // Simple AI: try to beat last play or lead with lowest card
+            let play = null;
+            
+            if (!lastCards || lastCards.length === 0) {
+                // Lead with lowest card
+                play = [hand[0]];
+            } else {
+                // Try to find a valid play
+                let lastCombo = identifyCombo(lastCards);
+                
+                // Try same type
+                for (let i = 0; i < hand.length; i++) {
+                    for (let len = 1; len <= 4 && i + len <= hand.length; len++) {
+                        let candidate = hand.slice(i, i + len);
+                        let combo = identifyCombo(candidate);
+                        if (combo && canBeat(lastCards, candidate)) {
+                            play = candidate;
+                            break;
+                        }
+                    }
+                    if (play) break;
+                }
+                
+                // Try bomb/rocket
+                if (!play) {
+                    for (let i = 0; i < hand.length - 3; i++) {
+                        let bomb = hand.slice(i, i + 4);
+                        if (identifyCombo(bomb) && canBeat(lastCards, bomb)) {
+                            play = bomb;
+                            break;
+                        }
+                    }
+                }
+                
+                // Check rocket
+                if (!play && hand.includes('BJ') && hand.includes('RJ')) {
+                    let rocket = ['BJ', 'RJ'];
+                    if (canBeat(lastCards, rocket)) play = rocket;
+                }
+            }
+            
+            if (play) {
+                executePlay(ai, play);
+            } else {
+                executePass(ai);
+            }
+        }
+        
+        function executePlay(player, cards) {
+            // Remove cards
+            for (let c of cards) {
+                let idx = hands[player].indexOf(c);
+                if (idx > -1) hands[player].splice(idx, 1);
+            }
+            
+            lastPlay = { player: player, cards: cards };
+            trickLeader = player;
+            passCount = 0;
+            
+            // Check multiplier
+            let combo = identifyCombo(cards);
+            if (combo && (combo.type === 'BOMB' || combo.type === 'ROCKET')) {
+                multiplier *= 2;
+            }
+            
+            document.getElementById('message').textContent = `${player} plays: ${cards.map(c => getRank(c)).join(', ')}`;
+            
+            // Check win
+            if (hands[player].length === 0) {
+                finishGame(player);
+                return;
+            }
+            
+            nextPlayer();
+            playTurn();
+        }
+        
+        function executePass(player) {
+            passCount++;
+            document.getElementById('message').textContent = `${player} passes`;
+            
+            if (passCount >= 2) {
+                lastPlay = null;
+                trickLeader = '';
+                passCount = 0;
+                currentPlayer = players.indexOf(trickLeader || landlord);
+                document.getElementById('message').textContent = "Trick complete! Lead again.";
+            } else {
+                nextPlayer();
+            }
+            
+            playTurn();
+        }
+        
+        function playCards() {
+            if (phase !== 'PLAYING' || currentPlayer !== 0) return;
+            
+            let selected = selectedCards.map(i => hands['Player'][i]);
+            
+            if (selected.length === 0) {
+                document.getElementById('message').textContent = "Select cards first!";
+                return;
+            }
+            
+            let combo = identifyCombo(selected);
+            if (!combo) {
+                document.getElementById('message').textContent = "Invalid combo!";
+                return;
+            }
+            
+            if (lastPlay && !canBeat(lastPlay.cards, selected)) {
+                document.getElementById('message').textContent = "Cannot beat last play!";
+                return;
+            }
+            
+            selectedCards = [];
+            executePlay('Player', selected);
+        }
+        
+        function pass() {
+            if (phase !== 'PLAYING' || currentPlayer !== 0) return;
+            selectedCards = [];
+            executePass('Player');
+        }
+        
+        function nextPlayer() {
+            currentPlayer = (currentPlayer + 1) % 3;
+        }
+        
+        function finishGame(winner) {
+            phase = 'FINISHED';
+            
+            let stake = baseStake * multiplier;
+            let landlordWon = winner === landlord;
+            
+            let scoreChanges = {};
+            if (landlordWon) {
+                scoreChanges[landlord] = stake * 2;
+                for (let p of players) {
+                    if (p !== landlord) scoreChanges[p] = -stake;
+                }
+            } else {
+                scoreChanges[landlord] = -stake * 2;
+                for (let p of players) {
+                    if (p !== landlord) scoreChanges[p] = stake;
+                }
+            }
+            
+            for (let p in scoreChanges) {
+                scores[p] += scoreChanges[p];
+            }
+            
+            document.getElementById('winnerText').textContent = `${winner} Wins!`;
+            document.getElementById('winnerOverlay').style.display = 'flex';
+            
+            updateUI();
+        }
+        
+        // Start
+        init();
+    </script>
+</body>
+</html>

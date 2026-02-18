@@ -23,9 +23,10 @@
 - [ ] Test game flow end-to-end
 
 ## Testing
-- [ ] Need user to test Godot game in browser or local Godot export
-- [ ] Verify bidding phase works correctly
-- [ ] Verify playing phase works correctly
+- [x] Create HTML5 version for easy browser testing
+- [ ] Deploy HTML5 version for user testing
+- [ ] Test bidding phase
+- [ ] Test playing phase
 - [ ] Verify AI makes valid moves
 
 ## Testing Requests (for user later)
