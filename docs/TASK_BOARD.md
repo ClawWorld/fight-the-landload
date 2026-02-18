@@ -20,14 +20,15 @@
 - [x] Complete Godot RuleAdapter full combo parity (fixed bomb compare bug)
 - [x] Create full game flow in Godot (bidding + playing)
 - [x] Implement basic AI for two opponents
-- [ ] Test game flow end-to-end
+- [x] Create HTML5 version for browser testing
+- [x] Fix card parsing bug (BJ/RJ detection)
+- [x] Fix duplicate card issue
+- [ ] Debug why player sees "B" card - waiting for user console output
 
 ## Testing
-- [x] Create HTML5 version for easy browser testing
-- [ ] Deploy HTML5 version for user testing
-- [ ] Test bidding phase
-- [ ] Test playing phase
-- [ ] Verify AI makes valid moves
+- [x] HTML5 version created
+- [x] Basic game flow works
+- [ ] Need user feedback on card display issues
 
 ## Testing Requests (for user later)
 When ready for manual validation, I will provide exact commands and expected outputs.

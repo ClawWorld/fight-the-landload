@@ -1,245 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dou Dizhu - Landlord Card Game</title>
+    <title>斗地主 - Dou Dizhu</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a3a2a 0%, #0d1f17 100%);
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a4731 0%, #0d2818 100%);
             min-height: 100vh;
             color: #fff;
-            padding: 20px;
+            padding: 15px;
         }
         
-        h1 { text-align: center; margin-bottom: 10px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; }
         
         .game-container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.4);
             border-radius: 15px;
-            padding: 20px;
-            min-height: 600px;
+            padding: 15px;
+            min-height: 550px;
         }
         
         .status-bar {
             text-align: center;
-            padding: 15px;
+            padding: 12px;
             background: rgba(255,255,255,0.1);
             border-radius: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
-        .phase { font-size: 1.2em; color: #4ade80; font-weight: bold; }
-        .message { margin-top: 10px; font-size: 1.1em; }
+        .phase { font-size: 1.1em; color: #4ade80; font-weight: bold; }
+        .message { margin-top: 8px; font-size: 1em; color: #fbbf24; }
         
         .table {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 30px;
-            background: rgba(0,100,50,0.3);
-            border-radius: 20px;
-            min-height: 300px;
-            margin-bottom: 20px;
-        }
-        
-        .player {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .player-info {
-            background: rgba(0,0,0,0.5);
-            padding: 10px 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        
-        .player-name { font-weight: bold; font-size: 1.1em; }
-        .hand-count { color: #fbbf24; }
-        .landlord-badge { 
-            background: #ef4444; 
-            color: white; 
-            padding: 2px 8px; 
-            border-radius: 5px; 
-            font-size: 0.8em;
-        }
-        
-        .cards-back {
-            display: flex;
-            gap: 2px;
-        }
-        
-        .card-back {
-            width: 40px;
-            height: 56px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            border-radius: 5px;
-            border: 2px solid #fff;
-        }
-        
-        .last-play {
-            text-align: center;
-            min-width: 200px;
-        }
-        
-        .last-play-cards {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            flex-wrap: wrap;
-            min-height: 60px;
-            align-items: center;
-        }
-        
-        .kitty-area {
-            text-align: center;
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-        }
-        
-        .player-hand {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            flex-wrap: wrap;
             padding: 20px;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,80,40,0.4);
             border-radius: 15px;
+            min-height: 200px;
+            margin-bottom: 15px;
         }
+        
+        .player { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 120px; }
+        
+        .player-info { background: rgba(0,0,0,0.6); padding: 8px 15px; border-radius: 8px; text-align: center; }
+        .player-name { font-weight: bold; font-size: 1em; }
+        .hand-count { color: #fbbf24; font-size: 0.9em; }
+        
+        .cards-back { display: flex; gap: 3px; }
+        .card-back { width: 30px; height: 42px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border-radius: 4px; border: 2px solid #fff; }
+        
+        .last-play { text-align: center; min-width: 150px; }
+        .last-play-cards { display: flex; justify-content: center; gap: 3px; flex-wrap: wrap; min-height: 50px; align-items: center; }
+        
+        .kitty-area { text-align: center; margin: 10px 0; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 8px; }
+        
+        .player-hand { display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 12px; min-height: 90px; }
         
         .card {
-            width: 50px;
-            height: 70px;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #000;
-            font-weight: bold;
-            user-select: none;
-            position: relative;
+            width: 45px; height: 62px; background: white; border-radius: 6px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.15s ease; color: #000; font-weight: bold;
+            user-select: none; position: relative; border: 2px solid #ccc;
         }
-        
-        .card:hover { transform: translateY(-10px); }
-        .card.selected { 
-            transform: translateY(-20px); 
-            box-shadow: 0 0 15px #fbbf24;
-        }
-        
+        .card:hover { transform: translateY(-8px); }
+        .card.selected { transform: translateY(-15px); box-shadow: 0 0 12px #fbbf24; border-color: #fbbf24; }
         .card.red { color: #dc2626; }
         .card.black { color: #000; }
+        .card.joker-red { background: linear-gradient(135deg, #dc2626, #991b1b); color: #fbbf24; border-color: #fbbf24; }
+        .card.joker-black { background: linear-gradient(135deg, #1f2937, #000); color: #fff; border-color: #fff; }
         
-        .card .suit { font-size: 1.5em; }
-        .card .rank { font-size: 1.2em; position: absolute; top: 5px; left: 5px; }
+        .card .suit { font-size: 1.3em; }
+        .card .rank { font-size: 1em; position: absolute; top: 4px; left: 4px; }
         
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
+        .controls { display: flex; justify-content: center; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
         
-        button {
-            padding: 12px 30px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: bold;
-        }
-        
+        button { padding: 10px 24px; font-size: 1em; border: none; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-weight: bold; }
         .btn-play { background: #22c55e; color: white; }
         .btn-pass { background: #f59e0b; color: white; }
         .btn-bid { background: #3b82f6; color: white; }
         .btn-pass-bid { background: #6b7280; color: white; }
+        button:hover { transform: scale(1.05); filter: brightness(1.1); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         
-        button:hover { transform: scale(1.05); }
-        button:disabled { 
-            opacity: 0.5; 
-            cursor: not-allowed; 
-            transform: none;
-        }
-        
-        .score-board {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-        }
-        
+        .score-board { display: flex; justify-content: center; gap: 25px; margin-top: 15px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; }
         .score-item { text-align: center; }
-        .score-value { font-size: 1.5em; font-weight: bold; color: #4ade80; }
+        .-size: 1.3em;score-value { font font-weight: bold; color: #4ade80; }
         
-        .winner-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            z-index: 100;
-        }
-        
-        .winner-text {
-            font-size: 3em;
-            color: #fbbf24;
-            margin-bottom: 20px;
-        }
+        .winner-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; flex-direction: column; z-index: 100; }
+        .winner-text { font-size: 2.5em; color: #fbbf24; margin-bottom: 20px; text-shadow: 0 0 20px #fbbf24; }
     </style>
 </head>
 <body>
-    <h1>🃏 Dou Dizhu - Landlord Card Game</h1>
+    <h1>🃏 斗地主 - Dou Dizhu</h1>
     
     <div class="game-container">
         <div class="status-bar">
-            <div class="phase" id="phase">Phase: Bidding</div>
-            <div class="message" id="message">Your turn to bid!</div>
+            <div class="phase" id="phase">叫牌阶段</div>
+            <div class="message" id="message">轮到您叫牌了！</div>
         </div>
         
         <div class="kitty-area">
-            <span>Kitty (3 cards): </span>
+            <span>底牌 (3张): </span>
             <span id="kittyCards">???</span>
         </div>
         
         <div class="table">
-            <div class="player" id="aiLeft">
+            <div class="player">
                 <div class="player-info">
-                    <div class="player-name">AI Left</div>
-                    <div class="hand-count" id="leftHandCount">17 cards</div>
+                    <div class="player-name">电脑(左)</div>
+                    <div class="hand-count" id="leftHandCount">17张</div>
                 </div>
                 <div class="cards-back" id="leftCardsBack"></div>
             </div>
             
             <div class="last-play">
-                <div>Last Play:</div>
-                <div class="last-play-cards" id="lastPlayCards">
-                    <span style="color: #9ca3af;">(none)</span>
-                </div>
+                <div>上一手牌:</div>
+                <div class="last-play-cards" id="lastPlayCards"><span style="color:#9ca3af;">(无)</span></div>
             </div>
             
-            <div class="player" id="aiRight">
+            <div class="player">
                 <div class="player-info">
-                    <div class="player-name">AI Right</div>
-                    <div class="hand-count" id="rightHandCount">17 cards</div>
+                    <div class="player-name">电脑(右)</div>
+                    <div class="hand-count" id="rightHandCount">17张</div>
                 </div>
                 <div class="cards-back" id="rightCardsBack"></div>
             </div>
@@ -248,50 +138,42 @@
         <div class="player-hand" id="playerHand"></div>
         
         <div class="controls" id="controls">
-            <button class="btn-bid" onclick="makeBid(1)">1 Point</button>
-            <button class="btn-bid" onclick="makeBid(2)">2 Points</button>
-            <button class="btn-bid" onclick="makeBid(3)">3 Points</button>
-            <button class="btn-pass-bid" onclick="makeBid(0)">Pass</button>
+            <button class="btn-bid" onclick="makeBid(1)">1分</button>
+            <button class="btn-bid" onclick="makeBid(2)">2分</button>
+            <button class="btn-bid" onclick="makeBid(3)">3分</button>
+            <button class="btn-pass-bid" onclick="makeBid(0)">不叫</button>
         </div>
         
-        <div class="score-board" id="scoreBoard">
-            <div class="score-item">
-                <div>Player</div>
-                <div class="score-value" id="scorePlayer">0</div>
-            </div>
-            <div class="score-item">
-                <div>AI Left</div>
-                <div class="score-value" id="scoreLeft">0</div>
-            </div>
-            <div class="score-item">
-                <div>AI Right</div>
-                <div class="score-value" id="scoreRight">0</div>
-            </div>
+        <div class="score-board">
+            <div class="score-item"><div>玩家</div><div class="score-value" id="scorePlayer">0</div></div>
+            <div class="score-item"><div>电脑(左)</div><div class="score-value" id="scoreLeft">0</div></div>
+            <div class="score-item"><div>电脑(右)</div><div class="score-value" id="scoreRight">0</div></div>
         </div>
     </div>
     
-    <div class="winner-overlay" id="winnerOverlay" style="display: none;">
-        <div class="winner-text" id="winnerText">Player Wins!</div>
-        <button onclick="startNewGame()">Play Again</button>
+    <div class="winner-overlay" id="winnerOverlay">
+        <div class="winner-text" id="winnerText">玩家获胜！</div>
+        <button class="btn-play" onclick="startNewGame()" style="font-size:1.2em;padding:15px 40px;">再来一局</button>
     </div>
 
     <script>
-        // Card configuration
-        const SUITS = ['♠', '♥', '♦', '♣'];
-        const RANKS = ['3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2'];
+        // Debug
+        console.log('=== DOU DIZHU LOADING ===');
+        
+        const RANKS = ['3','4','5','6','7','8','9','10','J','Q','K','A','2'];
         const RANK_VALUE = {};
         RANKS.forEach((r, i) => RANK_VALUE[r] = i);
-        RANK_VALUE['BJ'] = 13;
-        RANK_VALUE['RJ'] = 14;
+        RANK_VALUE['BJ'] = 13;  // 小王
+        RANK_VALUE['RJ'] = 14;  // 大王
         
         const BLOCKED_SEQ = new Set(['2', 'BJ', 'RJ']);
         
-        // Game state
         let players = ['Player', 'AI_Left', 'AI_Right'];
+        let playersCN = {'Player': '玩家', 'AI_Left': '电脑(左)', 'AI_Right': '电脑(右)'};
         let hands = {};
         let kitty = [];
         let currentPlayer = 0;
-        let phase = 'BIDDING'; // BIDDING, PLAYING, FINISHED
+        let phase = 'BIDDING';
         let bids = {};
         let highestBid = 0;
         let highestBidder = '';
@@ -303,14 +185,30 @@
         let baseStake = 1;
         let scores = { Player: 0, AI_Left: 0, AI_Right: 0 };
         let selectedCards = [];
+        let isAnimating = false;
+        let wasLastPlay = null;
         
-        // Initialize
         function init() {
+            console.log('=== INIT CALLED ===');
+            renderCardBacks();
             startNewGame();
         }
         
+        function renderCardBacks() {
+            let leftContainer = document.getElementById('leftCardsBack');
+            let rightContainer = document.getElementById('rightCardsBack');
+            leftContainer.innerHTML = '';
+            rightContainer.innerHTML = '';
+            for (let i = 0; i < 17; i++) {
+                let back = document.createElement('div');
+                back.className = 'card-back';
+                leftContainer.appendChild(back.cloneNode(true));
+                rightContainer.appendChild(back.cloneNode(true));
+            }
+        }
+        
         function startNewGame() {
-            // Reset state
+            console.log('=== START NEW GAME ===');
             phase = 'BIDDING';
             currentPlayer = 0;
             bids = {};
@@ -323,25 +221,32 @@
             multiplier = 1;
             baseStake = 1;
             selectedCards = [];
+            isAnimating = false;
+            wasLastPlay = null;
             
-            // Generate and shuffle deck
             let deck = buildDeck();
+            console.log('Deck built, length:', deck.length, 'first 5:', deck.slice(0,5));
             shuffle(deck);
+            console.log('Deck shuffled');
             dealCards(deck);
+            console.log('Cards dealt, player hand:', hands['Player']);
             
-            // Update UI
             document.getElementById('winnerOverlay').style.display = 'none';
+            renderCardBacks();
             updateUI();
         }
         
         function buildDeck() {
             let deck = [];
-            for (let suit of SUITS) {
+            for (let suit of ['S', 'H', 'D', 'C']) {
                 for (let rank of RANKS) {
-                    deck.push(rank + suit[0]);
+                    deck.push(rank + suit);
                 }
             }
             deck.push('BJ', 'RJ');
+            
+            console.log('BuildDeck result:', deck.length, 'cards');
+            console.log('Joker check - BJ:', deck.includes('BJ'), 'RJ:', deck.includes('RJ'));
             return deck;
         }
         
@@ -353,28 +258,44 @@
         }
         
         function dealCards(deck) {
+            let unique = [...new Set(deck)];
+            if (unique.length !== 54) {
+                console.error('ERROR: Deck has only', unique.length, 'unique cards!');
+                return;
+            }
+            
             hands['Player'] = deck.slice(0, 17);
             hands['AI_Left'] = deck.slice(17, 34);
             hands['AI_Right'] = deck.slice(34, 51);
             kitty = deck.slice(51, 54);
             
-            // Sort hands
             for (let p in hands) {
                 hands[p].sort((a, b) => getRankValue(a) - getRankValue(b));
             }
-        }
-        
-        function getRankValue(card) {
-            let rank = card.slice(0, -1);
-            return RANK_VALUE[rank] !== undefined ? RANK_VALUE[rank] : 0;
+            
+            // Debug: check for duplicates
+            let playerUnique = [...new Set(hands['Player'])];
+            console.log('Player unique cards:', playerUnique.length, 'should be 17');
         }
         
         function getRank(card) {
-            return card.slice(0, -1);
+            if (card === 'BJ' || card === 'RJ') return card;
+            if (card.length === 2 && (card[0] === 'B' || card[0] === 'R')) return card;
+            if (card.length === 3) return card.slice(0, 2);
+            if (card.length === 2) return card[0];
+            return card;
         }
         
         function getSuit(card) {
-            return card.slice(-1);
+            if (card === 'BJ' || card === 'RJ') return 'JOKER';
+            if (card.length === 2) return card[1];
+            if (card.length === 3) return card.slice(-1);
+            return '';
+        }
+        
+        function getRankValue(card) {
+            let rank = getRank(card);
+            return RANK_VALUE[rank] !== undefined ? RANK_VALUE[rank] : 0;
         }
         
         // Combo identification
@@ -391,94 +312,87 @@
             let uniqueRanks = Object.keys(counts);
             let byCount = Object.entries(counts).sort((a, b) => b[1] - a[1]);
             
-            // Rocket
-            if (n === 2 && counts['BJ'] && counts['RJ']) {
-                return { type: 'ROCKET', main: 'RJ', length: 2 };
+            // Rocket (大小王)
+            let hasBJ = uniqueRanks.includes('BJ');
+            let hasRJ = uniqueRanks.includes('RJ');
+            if (n === 2 && hasBJ && hasRJ) return { type: 'ROCKET', main: 'RJ', length: 2 };
+            
+            // Single (单张)
+            if (n === 1) return { type: 'SINGLE', main: uniqueRanks[0], length: 1 };
+            
+            // Pair (对子)
+            if (n === 2 && byCount[0][1] === 2) return { type: 'PAIR', main: byCount[0][0], length: 2 };
+            
+            // Triple (三张)
+            if (n === 3 && byCount[0][1] === 3) return { type: 'TRIPLE', main: byCount[0][0], length: 3 };
+            
+            // Bomb (炸弹)
+            if (n === 4 && byCount[0][1] === 4) return { type: 'BOMB', main: byCount[0][0], length: 4 };
+            
+            // Straight (顺子, 5+ consecutive singles)
+            if (n >= 5 && uniqueRanks.length === n && !hasBJ && !hasRJ) {
+                let sorted = [...uniqueRanks].sort((a, b) => (RANK_VALUE[a] || 0) - (RANK_VALUE[b] || 0));
+                let isSeq = true;
+                for (let i = 1; i < sorted.length; i++) {
+                    let prev = RANK_VALUE[sorted[i-1]] || 0;
+                    let curr = RANK_VALUE[sorted[i]] || 0;
+                    if (curr !== prev + 1) { isSeq = false; break; }
+                }
+                if (isSeq) return { type: 'STRAIGHT', main: sorted[sorted.length - 1], length: n };
             }
             
-            // Single
-            if (n === 1) {
-                return { type: 'SINGLE', main: uniqueRanks[0], length: 1 };
+            // Consecutive pairs (连对, 3+ pairs)
+            if (n >= 6 && n % 2 === 0) {
+                let pairs = uniqueRanks.filter(r => counts[r] === 2);
+                if (pairs.length === n / 2) {
+                    let sorted = [...pairs].sort((a, b) => (RANK_VALUE[a] || 0) - (RANK_VALUE[b] || 0));
+                    let isSeq = true;
+                    for (let i = 1; i < sorted.length; i++) {
+                        let prev = RANK_VALUE[sorted[i-1]] || 0;
+                        let curr = RANK_VALUE[sorted[i]] || 0;
+                        if (curr !== prev + 1) { isSeq = false; break; }
+                    }
+                    if (isSeq) return { type: 'CONSECUTIVE_PAIRS', main: sorted[sorted.length - 1], length: n };
+                }
             }
             
-            // Pair
-            if (n === 2 && byCount[0][1] === 2) {
-                return { type: 'PAIR', main: byCount[0][0], length: 2 };
+            // Airplane (飞机不带翅膀, 2+ triples)
+            if (n >= 6 && n % 3 === 0) {
+                let triples = uniqueRanks.filter(r => counts[r] === 3);
+                if (triples.length === n / 3) {
+                    let sorted = [...triples].sort((a, b) => (RANK_VALUE[a] || 0) - (RANK_VALUE[b] || 0));
+                    let isSeq = true;
+                    for (let i = 1; i < sorted.length; i++) {
+                        let prev = RANK_VALUE[sorted[i-1]] || 0;
+                        let curr = RANK_VALUE[sorted[i]] || 0;
+                        if (curr !== prev + 1) { isSeq = false; break; }
+                    }
+                    if (isSeq) return { type: 'AIRPLANE', main: sorted[sorted.length - 1], length: n };
+                }
             }
             
-            // Triple
-            if (n === 3 && byCount[0][1] === 3) {
-                return { type: 'TRIPLE', main: byCount[0][0], length: 3 };
-            }
-            
-            // Bomb
-            if (n === 4 && byCount[0][1] === 4) {
-                return { type: 'BOMB', main: byCount[0][0], length: 4 };
-            }
-            
-            // Triple + Single
+            // Triple + single (三带一)
             if (n === 4 && byCount[0][1] === 3) {
                 return { type: 'TRIPLE_SINGLE', main: byCount[0][0], length: 4 };
             }
             
-            // Triple + Pair
+            // Triple + pair (三带二)
             if (n === 5 && byCount[0][1] === 3 && byCount[1] && byCount[1][1] === 2) {
                 return { type: 'TRIPLE_PAIR', main: byCount[0][0], length: 5 };
             }
             
-            // Straight
-            if (n >= 5 && uniqueRanks.length === n && isStraight(uniqueRanks)) {
-                return { type: 'STRAIGHT', main: uniqueRanks[uniqueRanks.length - 1], length: n };
-            }
-            
-            // Consecutive pairs
-            if (n >= 6 && n % 2 === 0) {
-                let pairs = uniqueRanks.filter(r => counts[r] === 2);
-                if (pairs.length === n / 2 && isConsecutive(pairs)) {
-                    return { type: 'CONSECUTIVE_PAIRS', main: pairs[pairs.length - 1], length: n };
-                }
-            }
-            
-            // Airplane (no wings)
-            if (n >= 6 && n % 3 === 0) {
-                let triples = uniqueRanks.filter(r => counts[r] === 3);
-                if (triples.length === n / 3 && isConsecutive(triples)) {
-                    return { type: 'AIRPLANE', main: triples[triples.length - 1], length: n, chainLength: triples.length };
-                }
-            }
-            
-            // Four + two singles
+            // Four + two singles (四带二单)
             if (n === 6 && byCount[0][1] === 4) {
                 return { type: 'FOUR_TWO_SINGLES', main: byCount[0][0], length: 6 };
             }
             
-            // Four + two pairs
+            // Four + two pairs (四带二对)
             if (n === 8 && byCount[0][1] === 4) {
-                let pairCount = byCount.slice(1).filter(([,c]) => c === 2).length;
-                if (pairCount === 2) {
-                    return { type: 'FOUR_TWO_PAIRS', main: byCount[0][0], length: 8 };
-                }
+                let pairCount = byCount.slice(1).filter(x => x[1] === 2).length;
+                if (pairCount === 2) return { type: 'FOUR_TWO_PAIRS', main: byCount[0][0], length: 8 };
             }
             
             return null;
-        }
-        
-        function isStraight(ranks) {
-            let sorted = [...ranks].sort((a, b) => RANK_VALUE[a] - RANK_VALUE[b]);
-            for (let i = 1; i < sorted.length; i++) {
-                if (BLOCKED_SEQ.has(sorted[i])) return false;
-                if (RANK_VALUE[sorted[i]] !== RANK_VALUE[sorted[i-1]] + 1) return false;
-            }
-            return true;
-        }
-        
-        function isConsecutive(ranks) {
-            let sorted = [...ranks].sort((a, b) => RANK_VALUE[a] - RANK_VALUE[b]);
-            for (let i = 1; i < sorted.length; i++) {
-                if (BLOCKED_SEQ.has(sorted[i])) return false;
-                if (RANK_VALUE[sorted[i]] !== RANK_VALUE[sorted[i-1]] + 1) return false;
-            }
-            return true;
         }
         
         function canBeat(lastCards, newCards) {
@@ -488,77 +402,62 @@
             if (!next) return false;
             if (!last) return true;
             
-            // Rocket beats everything
             if (next.type === 'ROCKET') return true;
             if (last.type === 'ROCKET') return false;
             
-            // Bomb beats non-bomb
             if (next.type === 'BOMB' && last.type !== 'BOMB') return true;
             if (last.type === 'BOMB' && next.type !== 'BOMB') return false;
             
-            // Both bombs
             if (next.type === 'BOMB' && last.type === 'BOMB') {
                 return RANK_VALUE[next.main] > RANK_VALUE[last.main];
             }
             
-            // Same type and length
             if (next.type !== last.type || next.length !== last.length) return false;
-            
             return RANK_VALUE[next.main] > RANK_VALUE[last.main];
         }
         
-        // UI Functions
         function updateUI() {
-            // Phase
-            document.getElementById('phase').textContent = 
-                phase === 'BIDDING' ? 'Phase: Bidding' : 
-                phase === 'PLAYING' ? 'Phase: Playing' : 'Phase: Finished';
+            document.getElementById('phase').textContent = phase === 'BIDDING' ? '叫牌阶段' : phase === 'PLAYING' ? '出牌阶段' : '游戏结束';
             
-            // Current player message
-            let currentPlayerName = players[currentPlayer];
+            let currentPlayerName = playersCN[players[currentPlayer]];
             let isMyTurn = currentPlayer === 0;
             
             if (phase === 'BIDDING') {
-                document.getElementById('message').textContent = 
-                    isMyTurn ? "Your turn to bid!" : `${currentPlayerName} is bidding...`;
+                document.getElementById('message').textContent = isMyTurn ? "轮到您叫牌了！" : `${currentPlayerName} 正在叫牌...`;
             } else if (phase === 'PLAYING') {
-                document.getElementById('message').textContent = 
-                    isMyTurn ? "Your turn to play!" : `${currentPlayerName} is thinking...`;
+                document.getElementById('message').textContent = isMyTurn ? "轮到您出牌了！" : `${currentPlayerName} 正在思考...`;
             }
             
-            // Kitty
-            if (phase === 'BIDDING') {
-                document.getElementById('kittyCards').textContent = '???';
-            } else {
-                document.getElementById('kittyCards').textContent = kitty.map(c => getRank(c)).join(', ');
-            }
+            document.getElementById('kittyCards').textContent = phase === 'BIDDING' ? '???' : kitty.map(c => formatCardSimple(c)).join(' ');
             
-            // Opponent hand counts
-            document.getElementById('leftHandCount').textContent = 
-                hands['AI_Left'].length + ' cards';
-            document.getElementById('rightHandCount').textContent = 
-                hands['AI_Right'].length + ' cards';
+            document.getElementById('leftHandCount').textContent = hands['AI_Left'].length + '张';
+            document.getElementById('rightHandCount').textContent = hands['AI_Right'].length + '张';
+            updateCardBacks('leftCardsBack', hands['AI_Left'].length);
+            updateCardBacks('rightCardsBack', hands['AI_Right'].length);
             
-            // Last play
             if (lastPlay) {
-                let cardsHtml = lastPlay.cards.map(c => formatCard(c)).join('');
-                document.getElementById('lastPlayCards').innerHTML = 
-                    cardsHtml + `<div style="font-size:0.8em;color:#9ca3af">${lastPlay.player}</div>`;
+                let cardsHtml = lastPlay.cards.map(c => createCardHTML(c, true)).join('');
+                document.getElementById('lastPlayCards').innerHTML = cardsHtml + `<div style="font-size:0.75em;color:#9ca3af;width:100%">${playersCN[lastPlay.player]}</div>`;
             } else {
-                document.getElementById('lastPlayCards').innerHTML = 
-                    '<span style="color: #9ca3af;">(none)</span>';
+                document.getElementById('lastPlayCards').innerHTML = '<span style="color:#9ca3af;">(无)</span>';
             }
             
-            // Player hand
             renderPlayerHand();
-            
-            // Controls
             renderControls();
             
-            // Scores
             document.getElementById('scorePlayer').textContent = scores['Player'];
             document.getElementById('scoreLeft').textContent = scores['AI_Left'];
             document.getElementById('scoreRight').textContent = scores['AI_Right'];
+        }
+        
+        function updateCardBacks(elementId, count) {
+            let container = document.getElementById(elementId);
+            container.innerHTML = '';
+            for (let i = 0; i < Math.max(0, count); i++) {
+                let back = document.createElement('div');
+                back.className = 'card-back';
+                container.appendChild(back);
+            }
         }
         
         function renderPlayerHand() {
@@ -566,44 +465,76 @@
             container.innerHTML = '';
             
             let hand = hands['Player'];
+            console.log('RENDER: Player hand =', hand);
+            
             for (let i = 0; i < hand.length; i++) {
                 let card = hand[i];
                 let cardEl = document.createElement('div');
-                cardEl.className = 'card ' + (getSuit(card) === '♥' || getSuit(card) === '♦' ? 'red' : 'black');
-                cardEl.innerHTML = `
-                    <span class="rank">${getRank(card)}</span>
-                    <span class="suit">${getSuit(card) === 'B' ? '🃏' : getSuit(card) === 'R' ? '🃏' : 
-                        getSuit(card) === 'H' ? '♥' : 
-                        getSuit(card) === 'D' ? '♦' : 
-                        getSuit(card) === 'C' ? '♣' : '♠'}</span>
-                `;
-                cardEl.onclick = () => toggleCard(i);
-                if (selectedCards.includes(i)) {
-                    cardEl.classList.add('selected');
+                
+                let rank = getRank(card);
+                let suit = getSuit(card);
+                let isJoker = (rank === 'BJ' || rank === 'RJ');
+                let isRedJoker = (rank === 'RJ');
+                
+                let classes = 'card';
+                if (isJoker) {
+                    classes += isRedJoker ? ' joker-red' : ' joker-black';
+                } else {
+                    classes += (suit === 'H' || suit === 'D') ? ' red' : ' black';
                 }
+                cardEl.className = classes;
+                
+                let suitChar;
+                if (isJoker) suitChar = '🃏';
+                else if (suit === 'H') suitChar = '♥';
+                else if (suit === 'D') suitChar = '♦';
+                else if (suit === 'C') suitChar = '♣';
+                else suitChar = '♠';
+                
+                let displayRank = rank === 'BJ' ? '小王' : rank === 'RJ' ? '大王' : rank;
+                
+                cardEl.innerHTML = `<span class="rank">${displayRank}</span><span class="suit">${suitChar}</span>`;
+                cardEl.onclick = () => toggleCard(i);
+                if (selectedCards.includes(i)) cardEl.classList.add('selected');
                 container.appendChild(cardEl);
             }
         }
         
-        function formatCard(card) {
+        function createCardHTML(card, small) {
             let rank = getRank(card);
             let suit = getSuit(card);
-            let suitChar = suit === 'H' ? '♥' : suit === 'D' ? '♦' : suit === 'C' ? '♣' : '♠';
-            if (rank === 'BJ' || rank === 'RJ') suitChar = '🃏';
-            return `<div class="card ${suit === 'H' || suit === 'D' ? 'red' : 'black'}" style="width:40px;height:56px;display:inline-flex;margin:2px;">
-                <span style="font-size:0.8em;position:absolute;top:2px;left:3px;">${rank}</span>
-                <span style="font-size:1em;">${suitChar}</span>
-            </div>`;
+            let isJoker = (rank === 'BJ' || rank === 'RJ');
+            let isRedJoker = (rank === 'RJ');
+            
+            let classes = 'card';
+            if (isJoker) classes += isRedJoker ? ' joker-red' : ' joker-black';
+            else classes += (suit === 'H' || suit === 'D') ? ' red' : ' black';
+            
+            let suitChar;
+            if (isJoker) suitChar = '🃏';
+            else if (suit === 'H') suitChar = '♥';
+            else if (suit === 'D') suitChar = '♦';
+            else if (suit === 'C') suitChar = '♣';
+            else suitChar = '♠';
+            
+            let displayRank = rank === 'BJ' ? '小王' : rank === 'RJ' ? '大王' : rank;
+            let w = small ? '40px' : '45px';
+            let h = small ? '52px' : '62px';
+            
+            return `<div class="${classes}" style="width:${w};height:${h};display:inline-flex;margin:2px;flex-shrink:0;">
+                <span style="font-size:0.8em;position:absolute;top:2px;left:3px;">${displayRank}</span>
+                <span style="font-size:1em;">${suitChar}</span></div>`;
+        }
+        
+        function formatCardSimple(card) {
+            let rank = getRank(card);
+            return rank === 'BJ' ? '小王' : rank === 'RJ' ? '大王' : rank;
         }
         
         function toggleCard(index) {
-            if (phase !== 'PLAYING' || currentPlayer !== 0) return;
-            
-            if (selectedCards.includes(index)) {
-                selectedCards = selectedCards.filter(i => i !== index);
-            } else {
-                selectedCards.push(index);
-            }
+            if (phase !== 'PLAYING' || currentPlayer !== 0 || isAnimating) return;
+            if (selectedCards.includes(index)) selectedCards = selectedCards.filter(i => i !== index);
+            else selectedCards.push(index);
             selectedCards.sort((a, b) => a - b);
             renderPlayerHand();
         }
@@ -612,76 +543,69 @@
             let container = document.getElementById('controls');
             container.innerHTML = '';
             
+            if (isAnimating) {
+                container.innerHTML = '<span style="color:#fbbf24;">游戏中...</span>';
+                return;
+            }
+            
             if (phase === 'BIDDING') {
                 if (currentPlayer === 0) {
-                    container.innerHTML = `
-                        <button class="btn-bid" onclick="makeBid(1)">1 Point</button>
-                        <button class="btn-bid" onclick="makeBid(2)">2 Points</button>
-                        <button class="btn-bid" onclick="makeBid(3)">3 Points</button>
-                        <button class="btn-pass-bid" onclick="makeBid(0)">Pass</button>
-                    `;
+                    container.innerHTML = `<button class="btn-bid" onclick="makeBid(1)">1分</button>
+                        <button class="btn-bid" onclick="makeBid(2)">2分</button>
+                        <button class="btn-bid" onclick="makeBid(3)">3分</button>
+                        <button class="btn-pass-bid" onclick="makeBid(0)">不叫</button>`;
                 } else {
-                    container.innerHTML = '<span style="color:#9ca3af;">Waiting for AI...</span>';
+                    container.innerHTML = '<span style="color:#9ca3af;">等待电脑叫牌...</span>';
                 }
             } else if (phase === 'PLAYING') {
                 if (currentPlayer === 0) {
-                    container.innerHTML = `
-                        <button class="btn-play" onclick="playCards()">Play</button>
-                        <button class="btn-pass" onclick="pass()">Pass</button>
-                    `;
+                    container.innerHTML = `<button class="btn-play" onclick="playCards()">出牌</button>
+                        <button class="btn-pass" onclick="pass()">不要</button>`;
                 } else {
-                    container.innerHTML = '<span style="color:#9ca3af;">AI is thinking...</span>';
+                    container.innerHTML = '<span style="color:#9ca3af;">电脑思考中...</span>';
                 }
             }
         }
         
-        // Game actions
         function makeBid(value) {
-            if (phase !== 'BIDDING' || currentPlayer !== 0) return;
+            if (phase !== 'BIDDING' || currentPlayer !== 0 || isAnimating) return;
             
             bids['Player'] = value;
-            if (value > highestBid) {
-                highestBid = value;
-                highestBidder = 'Player';
-            }
+            if (value > highestBid) { highestBid = value; highestBidder = 'Player'; }
             
-            nextPlayer();
+            isAnimating = true;
             updateUI();
             
-            if (bids.size === 3) {
-                setTimeout(finishBidding, 500);
-            } else {
-                setTimeout(aiBid, 800);
-            }
+            setTimeout(() => {
+                isAnimating = false;
+                nextPlayer();
+                if (Object.keys(bids).length === 3) setTimeout(finishBidding, 500);
+                else setTimeout(aiBid, 600);
+            }, 300);
         }
         
         function aiBid() {
             let ai = players[currentPlayer];
-            // Simple AI: random bid with preference for higher bids
             let bid = 0;
-            if (Math.random() > 0.3) {
-                bid = Math.floor(Math.random() * 3) + 1;
-            }
+            if (Math.random() > 0.3) bid = Math.floor(Math.random() * 3) + 1;
             
             bids[ai] = bid;
-            if (bid > highestBid) {
-                highestBid = bid;
-                highestBidder = ai;
-            }
+            if (bid > highestBid) { highestBid = bid; highestBidder = ai; }
             
-            nextPlayer();
+            isAnimating = true;
             updateUI();
             
-            if (Object.keys(bids).length === 3) {
-                setTimeout(finishBidding, 500);
-            } else {
-                setTimeout(aiBid, 800);
-            }
+            setTimeout(() => {
+                isAnimating = false;
+                nextPlayer();
+                if (Object.keys(bids).length === 3) setTimeout(finishBidding, 500);
+                else setTimeout(aiBid, 600);
+            }, 600);
         }
         
         function finishBidding() {
             if (highestBid === 0) {
-                document.getElementById('message').textContent = "All passed! Starting new game...";
+                document.getElementById('message').textContent = "全部不叫！重新发牌...";
                 setTimeout(startNewGame, 1500);
                 return;
             }
@@ -694,20 +618,23 @@
             currentPlayer = players.indexOf(landlord);
             trickLeader = landlord;
             baseStake = highestBid;
+            wasLastPlay = landlord;
             
-            updateUI();
-            playTurn();
+            document.getElementById('message').textContent = `${playersCN[landlord]} 成为地主！底分：${baseStake}倍`;
+            
+            setTimeout(() => { updateUI(); playTurn(); }, 800);
         }
         
         function playTurn() {
             if (phase !== 'PLAYING') return;
-            
             let player = players[currentPlayer];
-            
             if (player === 'Player') {
+                isAnimating = false;
                 updateUI();
             } else {
-                setTimeout(() => aiPlay(player), 1000 + Math.random() * 1000);
+                isAnimating = true;
+                updateUI();
+                setTimeout(() => aiPlay(player), 1200 + Math.random() * 800);
             }
         }
         
@@ -715,165 +642,142 @@
             let hand = hands[ai];
             let lastCards = lastPlay ? lastPlay.cards : [];
             
-            // Simple AI: try to beat last play or lead with lowest card
             let play = null;
             
             if (!lastCards || lastCards.length === 0) {
-                // Lead with lowest card
                 play = [hand[0]];
             } else {
-                // Try to find a valid play
                 let lastCombo = identifyCombo(lastCards);
-                
-                // Try same type
-                for (let i = 0; i < hand.length; i++) {
+                for (let i = 0; i < hand.length && !play; i++) {
                     for (let len = 1; len <= 4 && i + len <= hand.length; len++) {
                         let candidate = hand.slice(i, i + len);
                         let combo = identifyCombo(candidate);
-                        if (combo && canBeat(lastCards, candidate)) {
-                            play = candidate;
-                            break;
-                        }
+                        if (combo && canBeat(lastCards, candidate)) { play = candidate; break; }
                     }
-                    if (play) break;
                 }
-                
-                // Try bomb/rocket
                 if (!play) {
-                    for (let i = 0; i < hand.length - 3; i++) {
+                    for (let i = 0; i < hand.length - 3 && !play; i++) {
                         let bomb = hand.slice(i, i + 4);
-                        if (identifyCombo(bomb) && canBeat(lastCards, bomb)) {
-                            play = bomb;
-                            break;
-                        }
+                        if (identifyCombo(bomb) && canBeat(lastCards, bomb)) play = bomb;
                     }
                 }
-                
-                // Check rocket
                 if (!play && hand.includes('BJ') && hand.includes('RJ')) {
                     let rocket = ['BJ', 'RJ'];
                     if (canBeat(lastCards, rocket)) play = rocket;
                 }
             }
             
-            if (play) {
-                executePlay(ai, play);
-            } else {
-                executePass(ai);
-            }
+            isAnimating = false;
+            if (play) executePlay(ai, play);
+            else executePass(ai);
         }
         
         function executePlay(player, cards) {
-            // Remove cards
             for (let c of cards) {
                 let idx = hands[player].indexOf(c);
                 if (idx > -1) hands[player].splice(idx, 1);
             }
             
+            wasLastPlay = player;
             lastPlay = { player: player, cards: cards };
             trickLeader = player;
             passCount = 0;
             
-            // Check multiplier
             let combo = identifyCombo(cards);
-            if (combo && (combo.type === 'BOMB' || combo.type === 'ROCKET')) {
-                multiplier *= 2;
-            }
+            if (combo && (combo.type === 'BOMB' || combo.type === 'ROCKET')) multiplier *= 2;
             
-            document.getElementById('message').textContent = `${player} plays: ${cards.map(c => getRank(c)).join(', ')}`;
+            document.getElementById('message').textContent = `${playersCN[player]} 出牌: ${cards.map(c => formatCardSimple(c)).join(' ')}`;
             
-            // Check win
-            if (hands[player].length === 0) {
-                finishGame(player);
-                return;
-            }
+            if (hands[player].length === 0) { finishGame(player); return; }
             
-            nextPlayer();
+            currentPlayer = (players.indexOf(player) + 1) % 3;
+            isAnimating = false;
             playTurn();
         }
         
         function executePass(player) {
             passCount++;
-            document.getElementById('message').textContent = `${player} passes`;
+            document.getElementById('message').textContent = `${playersCN[player]} 不要`;
             
             if (passCount >= 2) {
                 lastPlay = null;
+                let leader = wasLastPlay || landlord;
+                currentPlayer = players.indexOf(leader);
                 trickLeader = '';
                 passCount = 0;
-                currentPlayer = players.indexOf(trickLeader || landlord);
-                document.getElementById('message').textContent = "Trick complete! Lead again.";
+                document.getElementById('message').textContent = `过！${playersCN[leader]} 获得出牌权`;
             } else {
                 nextPlayer();
             }
             
+            isAnimating = false;
             playTurn();
         }
         
         function playCards() {
-            if (phase !== 'PLAYING' || currentPlayer !== 0) return;
+            if (phase !== 'PLAYING' || currentPlayer !== 0 || isAnimating) return;
             
             let selected = selectedCards.map(i => hands['Player'][i]);
+            console.log('playCards: selected =', selected);
             
-            if (selected.length === 0) {
-                document.getElementById('message').textContent = "Select cards first!";
-                return;
-            }
+            if (selected.length === 0) { document.getElementById('message').textContent = "请先选择卡片！"; return; }
             
             let combo = identifyCombo(selected);
-            if (!combo) {
-                document.getElementById('message').textContent = "Invalid combo!";
-                return;
+            console.log('playCards: combo =', combo);
+            
+            if (!combo) { 
+                document.getElementById('message').textContent = "无效的牌型！"; 
+                console.log('Invalid combo, selected cards:', selected);
+                return; 
             }
             
-            if (lastPlay && !canBeat(lastPlay.cards, selected)) {
-                document.getElementById('message').textContent = "Cannot beat last play!";
-                return;
+            if (lastPlay) {
+                console.log('playCards: lastPlay =', lastPlay);
+                console.log('canBeat check:', canBeat(lastPlay.cards, selected));
             }
+            
+            if (lastPlay && !canBeat(lastPlay.cards, selected)) { document.getElementById('message').textContent = "打不赢上家的牌！"; return; }
             
             selectedCards = [];
+            isAnimating = true;
             executePlay('Player', selected);
         }
         
         function pass() {
-            if (phase !== 'PLAYING' || currentPlayer !== 0) return;
+            if (phase !== 'PLAYING' || currentPlayer !== 0 || isAnimating) return;
             selectedCards = [];
+            isAnimating = true;
             executePass('Player');
         }
         
-        function nextPlayer() {
-            currentPlayer = (currentPlayer + 1) % 3;
-        }
+        function nextPlayer() { currentPlayer = (currentPlayer + 1) % 3; }
         
         function finishGame(winner) {
             phase = 'FINISHED';
-            
             let stake = baseStake * multiplier;
             let landlordWon = winner === landlord;
             
             let scoreChanges = {};
             if (landlordWon) {
                 scoreChanges[landlord] = stake * 2;
-                for (let p of players) {
-                    if (p !== landlord) scoreChanges[p] = -stake;
-                }
+                for (let p of players) if (p !== landlord) scoreChanges[p] = -stake;
             } else {
                 scoreChanges[landlord] = -stake * 2;
-                for (let p of players) {
-                    if (p !== landlord) scoreChanges[p] = stake;
-                }
+                for (let p of players) if (p !== landlord) scoreChanges[p] = stake;
             }
             
-            for (let p in scoreChanges) {
-                scores[p] += scoreChanges[p];
-            }
+            for (let p in scoreChanges) scores[p] += scoreChanges[p];
             
-            document.getElementById('winnerText').textContent = `${winner} Wins!`;
+            let winnerCN = playersCN[winner] || winner;
+            let isPlayer = winner === 'Player';
+            
+            document.getElementById('winnerText').textContent = `${winnerCN} 获胜！`;
+            document.getElementById('winnerText').style.color = isPlayer ? '#4ade80' : '#ef4444';
             document.getElementById('winnerOverlay').style.display = 'flex';
             
             updateUI();
         }
         
-        // Start
         init();
     </script>
 </body>
