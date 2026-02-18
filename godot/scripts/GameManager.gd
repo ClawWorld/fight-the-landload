@@ -44,6 +44,7 @@ var scores: Dictionary = {"Player": 0, "AI_Left": 0, "AI_Right": 0}
 @onready var bid_2_button: Button = $BidArea/Bid2
 @onready var bid_3_button: Button = $BidArea/Bid3
 @onready var pass_bid_button: Button = $BidArea/PassBid
+@onready var last_play_label: Label = $LastPlayArea/LastPlayCards
 
 var adapter = preload("res://scripts/RuleAdapter.gd").new()
 
@@ -142,6 +143,16 @@ func _update_ui() -> void:
 	play_button.visible = current_phase == Phase.PLAYING and current_player() == "Player"
 	pass_button.visible = current_phase == Phase.PLAYING and current_player() == "Player" and last_play.has("player_id")
 	no_double_button.visible = current_phase == Phase.PLAYING
+	
+	# Update last play display
+	if last_play.has("cards"):
+		var cards = last_play["cards"]
+		var formatted = []
+		for c in cards:
+			formatted.append(_format_card(c))
+		last_play_label.text = ", ".join(formatted) + "\n(" + str(last_play["player_id"]) + ")"
+	else:
+		last_play_label.text = "(none)"
 
 func _update_player_hand_display() -> void:
 	for child in player_hand_container.get_children():
@@ -157,7 +168,12 @@ func _update_player_hand_display() -> void:
 		player_hand_container.add_child(btn)
 
 func _format_card(card: String) -> String:
-	# Simplify card display
+	# Handle jokers properly
+	if card == "BJ":
+		return "小王"
+	if card == "RJ":
+		return "大王"
+	# Regular cards: rank without suit
 	var rank = card.substr(0, card.length() - 1)
 	return rank
 
@@ -175,7 +191,10 @@ func _update_selection_label() -> void:
 	if selected.is_empty():
 		status_label.text = "Selected: (none)"
 	else:
-		status_label.text = "Selected: " + ", ".join(selected)
+		var formatted = []
+		for c in selected:
+			formatted.append(_format_card(c))
+		status_label.text = "Selected: " + ", ".join(formatted)
 
 func _get_selected_cards() -> Array[String]:
 	var result: Array[String] = []
@@ -336,8 +355,8 @@ func _ai_play_cards(player_id: String, cards: Array[String]) -> void:
 		_finish_game(player_id)
 		return
 	
-	# Next player
-	next_player()
+	# Next player in rotation (not trick leader!)
+	current_player_idx = (current_player_idx + 1) % 3
 	_play_turn()
 
 func _ai_pass(player_id: String) -> void:
@@ -345,13 +364,18 @@ func _ai_pass(player_id: String) -> void:
 	pass_count += 1
 	
 	if pass_count >= 2:
-		# Trick complete, reset
+		# Two passes - trick complete, previous leader plays again
 		last_play = {}
+		current_player_idx = players.find(trick_leader)
+		if current_player_idx < 0:
+			current_player_idx = players.find(landlord)
 		trick_leader = ""
 		pass_count = 0
-		_status("Trick complete! %s leads again" % trick_leader)
+		_status("Trick complete! %s leads again" % players[current_player_idx])
+	else:
+		# Next player in rotation
+		current_player_idx = (current_player_idx + 1) % 3
 	
-	next_player()
 	_play_turn()
 
 func _on_play_pressed() -> void:
@@ -390,8 +414,8 @@ func _on_play_pressed() -> void:
 		_finish_game("Player")
 		return
 	
-	# Next player
-	next_player()
+	# Next player in rotation
+	current_player_idx = (current_player_idx + 1) % 3
 	_play_turn()
 
 func _on_pass_pressed() -> void:
@@ -399,12 +423,18 @@ func _on_pass_pressed() -> void:
 	pass_count += 1
 	
 	if pass_count >= 2:
+		# Two passes - trick complete, player who played last leads
 		last_play = {}
+		current_player_idx = players.find(trick_leader)
+		if current_player_idx < 0:
+			current_player_idx = players.find(landlord)
 		trick_leader = ""
 		pass_count = 0
 		_status("Trick complete! You lead.")
+	else:
+		# Next player in rotation
+		current_player_idx = (current_player_idx + 1) % 3
 	
-	next_player()
 	_play_turn()
 
 func _on_no_double_pressed() -> void:
