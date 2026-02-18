@@ -3,7 +3,8 @@
 // Simple CLI test for Dou Dizhu game logic
 
 const { buildDeck, shuffle, deal } = require('../src/core/cards.js');
-const { identifyCombo, canBeat } = require('../src/core/combo.js');
+const { identifyCombo } = require('../src/core/combo.js');
+const { canBeat } = require('../src/core/compare.js');
 const { createSeededRng } = require('../src/core/rng.js');
 
 // Helper to format card objects

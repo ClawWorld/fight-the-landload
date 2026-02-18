@@ -21,41 +21,39 @@
 ## Project Overview
 - **Game**: Dou Dizhu (Fight the Landlord) card game
 - **Platform**: Godot 4.x → Steam (Windows/Linux/Mac)
-- **Rules**: JavaScript engine with full combo support (19 tests passing)
+- **Rules**: JavaScript engine (19 tests passing)
 
-## Completed Features
-- ✅ Core rules engine (JavaScript) - all 19 tests passing
-- ✅ Godot RuleAdapter - full combo support (STRAIGHT, CONSECUTIVE_PAIRS, AIRPLANE, etc.)
-- ✅ Godot GameManager - complete game flow
-  - Bidding phase (1/2/3 points, pass)
-  - Playing phase (select cards, play, pass)
-  - Score calculation
-- ✅ Fixed bugs:
-  - Turn order after playing (next in rotation)
-  - Pass reset logic (two passes → last leader)
-- ✅ Basic AI for two opponents
+## ✅ Completed
+- Core rules engine (JavaScript) - 19 tests passing
+- Godot RuleAdapter - full combo support
+- Godot GameManager - complete game flow
+- Fixed: Turn order, pass logic, card display
+- Added: Last play display, proper joker display
 
-## Files
+## 📁 Files
 - `godot/project.godot` - Godot project
-- `godot/scenes/Game.tscn` - Main game scene
+- `godot/scenes/Game.tscn` - Main scene
 - `godot/scripts/GameManager.gd` - Game logic
 - `godot/scripts/RuleAdapter.gd` - Rules adapter
-- `src/core/` - JavaScript rules engine
+- `src/core/` - JavaScript rules
 
-## Testing
+## 🧪 Testing
 ```bash
-# Test rules
-cd /home/node/.openclaw/workspace/landlord && node --test
+cd /home/node/.openclaw/workspace/landlord
+node --test          # 19 rule tests
+node scripts/demo-full-game.js  # Full game sim
 ```
 
-To test in Godot:
-1. Open Godot 4.x
-2. Import `godot/project.godot`
-3. Press F5 to run
+## ⏳ Waiting For
+- Godot installation to test locally
+- User feedback on any issues
 
-## Known Issues (to fix)
-- Card display may show "B" instead of proper joker names
-- Need better visual feedback for selected cards
+## 📋 Next Steps (when can test)
+1. Test full game flow in Godot
+2. Add card sprites/assets
+3. Add sound effects
+4. Add animations
+5. Steam integration
 
 ## Testing Requests (for user later)
 When ready for manual validation, I will provide exact commands and expected outputs.
