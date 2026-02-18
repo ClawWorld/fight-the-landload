@@ -1,0 +1,215 @@
+[gd_scene load_steps=2 format=3 uid="uid://bqx1c2m3n4p5q"]
+
+[ext_resource type="Script" path="res://scripts/GameManager.gd" id="1_main"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.15, 0.2, 0.3, 1)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 10.0
+offset_right = 200.0
+offset_bottom = 50.0
+grow_horizontal = 2
+text = "🃏 Dou Dizhu - Landlord Card Game"
+horizontal_alignment = 1
+
+[node name="StatusArea" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 60.0
+offset_right = 300.0
+offset_bottom = 120.0
+grow_horizontal = 2
+
+[node name="PhaseLabel" type="Label" parent="StatusArea"]
+layout_mode = 2
+text = "Phase: Bidding"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="StatusArea"]
+layout_mode = 2
+text = "Game starting..."
+horizontal_alignment = 1
+
+[node name="KittyArea" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 130.0
+offset_right = 150.0
+offset_bottom = 170.0
+grow_horizontal = 2
+
+[node name="KittyTitle" type="Label" parent="KittyArea"]
+layout_mode = 2
+text = "Kitty (3 cards):"
+horizontal_alignment = 1
+
+[node name="KittyCards" type="Label" parent="KittyArea"]
+layout_mode = 2
+text = "Cards hidden"
+horizontal_alignment = 1
+
+[node name="LeftArea" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 200.0
+offset_right = 150.0
+offset_bottom = 350.0
+
+[node name="HandCount" type="Label" parent="LeftArea"]
+layout_mode = 2
+text = "AI Left
+17 cards"
+horizontal_alignment = 1
+
+[node name="RightArea" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+offset_left = -150.0
+offset_top = 200.0
+offset_right = -20.0
+offset_bottom = 350.0
+grow_horizontal = 0
+
+[node name="HandCount" type="Label" parent="RightArea"]
+layout_mode = 2
+text = "AI Right
+17 cards"
+horizontal_alignment = 1
+
+[node name="PlayerArea" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -350.0
+offset_top = -200.0
+offset_right = 350.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="PlayerTitle" type="Label" parent="PlayerArea"]
+layout_mode = 2
+text = "Your Hand:"
+horizontal_alignment = 1
+
+[node name="HandContainer" type="HBoxContainer" parent="PlayerArea"]
+layout_mode = 2
+alignment = 1
+
+[node name="BidArea" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -50.0
+offset_right = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Bid1" type="Button" parent="BidArea"]
+layout_mode = 2
+text = "1 (Standard)"
+
+[node name="Bid2" type="Button" parent="BidArea"]
+layout_mode = 2
+text = "2 (Double)"
+
+[node name="Bid3" type="Button" parent="BidArea"]
+layout_mode = 2
+text = "3 (Triple)"
+
+[node name="PassBid" type="Button" parent="BidArea"]
+layout_mode = 2
+text = "Pass"
+
+[node name="ActionArea" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -60.0
+offset_right = 200.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+
+[node name="PlayButton" type="Button" parent="ActionArea"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Play Cards"
+
+[node name="PassButton" type="Button" parent="ActionArea"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pass"
+
+[node name="NoDoubleButton" type="Button" parent="ActionArea"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "No Double"
+
+[node name="LastPlayArea" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LastPlayLabel" type="Label" parent="LastPlayArea"]
+layout_mode = 2
+text = "Last Play:"
+horizontal_alignment = 1
+
+[node name="LastPlayCards" type="Label" parent="LastPlayArea"]
+layout_mode = 2
+text = "(none)"
+horizontal_alignment = 1

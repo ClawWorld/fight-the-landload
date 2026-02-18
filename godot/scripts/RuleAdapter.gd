@@ -108,6 +108,53 @@ func identify_combo(ranks: Array[String]) -> Dictionary:
 			if not blocked_trip and _is_consecutive(triples):
 				return {"ok": true, "type": "AIRPLANE", "main": String(triples[-1]), "len": n, "chain": triples.size()}
 
+	# airplane + single wings
+	if n >= 8 and n % 4 == 0:
+		var chain_len := n / 4
+		var triples_sw := _main_by_count(counts, 3)
+		if triples_sw.size() >= chain_len:
+			for i in range(triples_sw.size() - chain_len + 1):
+				var chain := triples_sw.slice(i, i + chain_len)
+				var blocked := false
+				for k in chain:
+					if BLOCKED_SEQ.has(String(k)):
+						blocked = true
+						break
+				if blocked or not _is_consecutive(chain):
+					continue
+				var remaining := counts.duplicate()
+				for rank in chain:
+					remaining[rank] -= 3
+				var singles := []
+				for r in remaining.keys():
+					for j in range(remaining[r]):
+						singles.append(r)
+				if singles.size() == chain_len:
+					return {"ok": true, "type": "AIRPLANE_SINGLE_WINGS", "main": String(chain[-1]), "len": n, "chain": chain_len}
+
+	# airplane + pair wings
+	if n >= 10 and n % 5 == 0:
+		var chain_len_pw := n / 5
+		var triples_pw := _main_by_count(counts, 3)
+		if triples_pw.size() >= chain_len_pw:
+			for i in range(triples_pw.size() - chain_len_pw + 1):
+				var chain := triples_pw.slice(i, i + chain_len_pw)
+				var blocked := false
+				for k in chain:
+					if BLOCKED_SEQ.has(String(k)):
+						blocked = true
+						break
+				if blocked or not _is_consecutive(chain):
+					continue
+				var remaining := counts.duplicate()
+				for rank in chain:
+					remaining[rank] -= 3
+				var pairs := 0
+				for r in remaining.keys():
+					pairs += int(remaining[r] / 2)
+				if pairs >= chain_len_pw:
+					return {"ok": true, "type": "AIRPLANE_PAIR_WINGS", "main": String(chain[-1]), "len": n, "chain": chain_len_pw}
+
 	# four + two singles
 	if n == 6:
 		for k in unique:
@@ -135,19 +182,26 @@ func can_beat(last_combo: Dictionary, new_combo: Dictionary) -> bool:
 	var new_type := String(new_combo.get("type", ""))
 	var last_type := String(last_combo.get("type", ""))
 
+	# Rocket beats everything
 	if new_type == "ROCKET":
 		return true
 	if last_type == "ROCKET":
 		return false
 
+	# Bomb beats non-bomb (except rocket handled above)
 	if new_type == "BOMB" and last_type != "BOMB":
 		return true
 	if last_type == "BOMB" and new_type != "BOMB":
 		return false
 
+	# Both bombs: compare main rank
+	if new_type == "BOMB" and last_type == "BOMB":
+		return int(ORDER[String(new_combo.get("main", "3"))]) > int(ORDER[String(last_combo.get("main", "3"))])
+
+	# Must be same type and length
 	if new_type != last_type:
 		return false
 	if int(new_combo.get("len", 0)) != int(last_combo.get("len", -1)):
 		return false
 
-	return int(ORDER[String(new_combo.get("main", "3"))]) > int(ORDER[String(last_combo.get("main", "RJ"))])
+	return int(ORDER[String(new_combo.get("main", "3"))]) > int(ORDER[String(last_combo.get("main", "3"))])

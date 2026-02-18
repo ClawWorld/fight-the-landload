@@ -16,5 +16,17 @@
 - [~] Build Godot prototype scene (project + interactive card UI + expanded local rule adapter incl. straight/连对/飞机无翅膀/三带/四带 done; next: full parity incl. airplane wings + real turn-state binding)
 - [ ] Integrate Steamworks wrapper
 
+## In Progress
+- [x] Complete Godot RuleAdapter full combo parity (fixed bomb compare bug)
+- [x] Create full game flow in Godot (bidding + playing)
+- [x] Implement basic AI for two opponents
+- [ ] Test game flow end-to-end
+
+## Testing
+- [ ] Need user to test Godot game in browser or local Godot export
+- [ ] Verify bidding phase works correctly
+- [ ] Verify playing phase works correctly
+- [ ] Verify AI makes valid moves
+
 ## Testing Requests (for user later)
 When ready for manual validation, I will provide exact commands and expected outputs.
