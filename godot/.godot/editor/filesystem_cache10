@@ -1,0 +1,14 @@
+63f7b34db8d8cdea90c76aacccf841ec
+::res://::1771420459
+node_3d.tscn::PackedScene::6181831862392426096::1771420437::0::1::::<><><>0<>0<><>::
+README.md::TextFile::-1::1771229337::0::1::::<><><>0<>0<><>::
+::res://assets/::1771419287
+::res://assets/cards/::1771419287
+::res://scenes/::1771414361
+Game.tscn::PackedScene::3558506521603561216::1771414361::0::1::::<><><>0<>0<><>::res://scripts/GameManager.gd
+Main.tscn::PackedScene::471933::1771231589::0::1::::<><><>0<>0<><>::res://scripts/Main.gd
+::res://scripts/::1771420033
+GameManager.gd::GDScript::4844242479107242537::1771420226::0::1::::GameManager<>Control<><>0<>0<><>::
+Main.gd::GDScript::703784156481697660::1771231619::0::1::::<>Control<><>0<>0<><>::
+RuleAdapter.gd::GDScript::5727135433838715835::1771414016::0::1::::RuleAdapter<>RefCounted<><>0<>0<><>::
+::res://{scenes,scripts,assets,addons}/::1771229330

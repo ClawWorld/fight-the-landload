@@ -48,6 +48,9 @@ var scores: Dictionary = {"Player": 0, "AI_Left": 0, "AI_Right": 0}
 
 var adapter = preload("res://scripts/RuleAdapter.gd").new()
 
+# Selection state
+var selected_indices: Dictionary = {}
+
 func _ready() -> void:
 	# Connect bid buttons manually
 	var bid_1 = $BidArea/Bid1
@@ -177,8 +180,6 @@ func _format_card(card: String) -> String:
 	var rank = card.substr(0, card.length() - 1)
 	return rank
 
-var selected_indices: Dictionary = {}
-
 func _on_card_toggled(index: int, btn: Button) -> void:
 	if btn.button_pressed:
 		selected_indices[index] = true
@@ -231,7 +232,9 @@ func make_bid(player_id: String, bid_value: int) -> void:
 func _bid_name(bid: int) -> String:
 	if bid == 0:
 		return "Pass"
-	return str(bid) + (bid == 1 and not _has_higher_bid() else "")
+	if bid == 1 and not _has_higher_bid():
+		return "1"
+	return str(bid)
 
 func _has_higher_bid() -> bool:
 	return highest_bid >= 3 or (bids.values().count(0) >= 2 and highest_bid > 0)
