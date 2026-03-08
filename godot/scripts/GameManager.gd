@@ -161,7 +161,9 @@ func _update_player_hand_display() -> void:
 	for child in player_hand_container.get_children():
 		child.queue_free()
 	
-	var player_hand = hands["Player"]
+	var player_hand = hands["Player"].duplicate()
+	player_hand.sort_custom(func(a, b): return adapter.ORDER[a] < adapter.ORDER[b])
+	
 	for i in range(player_hand.size()):
 		var btn = Button.new()
 		btn.toggle_mode = true
@@ -176,9 +178,11 @@ func _format_card(card: String) -> String:
 		return "小王"
 	if card == "RJ":
 		return "大王"
-	# Regular cards: rank without suit
+	# Regular cards: show rank and suit
+	var suit = card.substr(card.length() - 1, 1)
 	var rank = card.substr(0, card.length() - 1)
-	return rank
+	var suit_symbol = {"S": "♠", "H": "♥", "D": "♦", "C": "♣"}.get(suit, suit)
+	return rank + suit_symbol
 
 func _on_card_toggled(index: int, btn: Button) -> void:
 	if btn.button_pressed:
